@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nathan · Phonetics Researcher</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232C5F5A'/%3E%3Cg stroke='%23F6F6F3' stroke-width='4' stroke-linecap='round'%3E%3Cline x1='14' y1='32' x2='22' y2='32'/%3E%3Cline x1='27' y1='22' x2='27' y2='42'/%3E%3Cline x1='34' y1='16' x2='34' y2='48'/%3E%3Cline x1='41' y1='24' x2='41' y2='40'/%3E%3Cline x1='48' y1='30' x2='48' y2='34'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#F6F6F3;
+    --surface:#FFFFFF;
+    --ink:#21262C;
+    --ink-soft:#5C6670;
+    --accent:#2C5F5A;
+    --accent-deep:#1E4642;
+    --accent-tint:#E7EFED;
+    --line:#E2E3DE;
+    --serif: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Hiragino Sans", "Yu Gothic", sans-serif;
+    --maxw: 1120px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  [hidden]{display:none !important}
+
+  /* ===== 视图切换 ===== */
+  .view{display:none}
+  .view.active{display:block}
+
+  /* ===== 顶部导航 ===== */
+  .nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(246,246,243,.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:var(--maxw);margin:0 auto;padding:0 24px;
+    display:flex;align-items:center;height:60px;gap:24px;
+  }
+  .brand{font-family:var(--serif);font-weight:700;letter-spacing:.02em;color:var(--accent-deep);margin-right:auto;white-space:nowrap}
+  .nav-links{display:flex;gap:22px;font-size:14px;color:var(--ink-soft);align-items:center}
+  .nav-links a{transition:color .2s}
+  .nav-links a:hover{color:var(--accent)}
+  .nav-links a.active{color:var(--accent);font-weight:600}
+  .nav-right{display:flex;align-items:center;gap:14px}
+  .nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:6px}
+  .nav-toggle svg{width:24px;height:24px;stroke:var(--ink)}
+
+  /* ===== 语言切换 ===== */
+  .lang-switch{display:flex;border:1px solid var(--line);border-radius:100px;overflow:hidden;flex:none}
+  .lang-btn{
+    background:transparent;border:none;padding:6px 11px;font-size:12.5px;cursor:pointer;
+    color:var(--ink-soft);transition:background .2s,color .2s;
+  }
+  .lang-btn:hover{color:var(--accent)}
+  .lang-btn.active{background:var(--accent);color:#fff}
+
+  /* ===== 页内快捷导航（chips） ===== */
+  .chips{
+    max-width:var(--maxw);margin:0 auto;padding:28px 24px 0;
+    display:flex;gap:10px;flex-wrap:wrap;
+  }
+  .chip{
+    background:transparent;border:1px solid var(--line);color:var(--ink-soft);
+    padding:7px 16px;border-radius:100px;font-size:13px;cursor:pointer;
+    transition:border-color .2s,color .2s;
+  }
+  .chip:hover{border-color:var(--accent);color:var(--accent)}
+
+  /* ===== Hero ===== */
+  .hero{
+    max-width:var(--maxw);margin:0 auto;padding:84px 24px 40px;
+    display:grid;grid-template-columns:1fr;gap:36px;align-items:center;
+  }
+  .hero-eyebrow{
+    font-size:13px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent);font-weight:600;margin-bottom:20px;
+  }
+  .hero h1{
+    font-family:var(--serif);font-weight:700;
+    font-size:clamp(40px,7vw,72px);line-height:1.05;color:var(--ink);
+    letter-spacing:-.01em;
+  }
+  .hero h1 .last{color:var(--accent)}
+  .hero-name{display:flex;align-items:baseline;flex-wrap:wrap;gap:16px;column-gap:18px}
+  .hero-ipa{
+    font-family:var(--serif);color:var(--ink-soft);
+    font-size:clamp(22px,3vw,30px);letter-spacing:.02em;
+    border-bottom:1px solid var(--line);padding-bottom:2px;
+  }
+  .hero-media{display:flex;flex-direction:column;gap:18px}
+  .hero-photo{
+    width:100%;max-width:320px;aspect-ratio:4/5;object-fit:cover;
+    border-radius:16px;border:1px solid var(--line);
+    box-shadow:0 8px 24px rgba(0,0,0,.10);display:block;
+  }
+  .hero-role{
+    margin-top:16px;font-size:clamp(17px,2.4vw,21px);color:var(--ink-soft);
+    font-family:var(--serif);font-style:italic;
+  }
+  .hero-loc{margin-top:8px;font-size:14px;color:var(--ink-soft);display:flex;align-items:center;gap:8px}
+  .hero-loc svg{width:16px;height:16px;stroke:var(--accent)}
+  .hero-desc{margin-top:24px;max-width:60ch;color:var(--ink-soft);font-size:16px}
+  .hero-actions{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 22px;border-radius:6px;font-size:15px;font-weight:600;
+    transition:transform .15s, background .2s;cursor:pointer;border:none;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:var(--accent-deep)}
+  .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .wave{
+    width:100%;height:auto;display:block;
+    margin-top:8px;border-radius:10px;
+  }
+  .wave .bar{transform-origin:center;animation:pulse 3s ease-in-out infinite}
+  .wave .bar:nth-child(odd){animation-delay:.6s}
+  @keyframes pulse{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.72)}}
+
+  /* ===== 生活页头 ===== */
+  .life-hero{
+    max-width:var(--maxw);margin:0 auto;padding:84px 24px 28px;
+  }
+  .life-kicker{
+    font-size:13px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent);font-weight:700;margin-bottom:14px;
+  }
+  .life-title{
+    font-family:var(--serif);font-weight:700;
+    font-size:clamp(30px,5vw,46px);color:var(--ink);line-height:1.15;
+  }
+  .life-sub{margin-top:12px;color:var(--ink-soft);max-width:56ch;font-size:15px}
+
+  /* ===== Section 通用 ===== */
+  section{padding:72px 24px;border-top:1px solid var(--line)}
+  .wrap{max-width:var(--maxw);margin:0 auto}
+  .sec-head{margin-bottom:40px}
+  .sec-kicker{
+    font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent);font-weight:700;margin-bottom:12px;
+  }
+  .sec-title{
+    font-family:var(--serif);font-weight:700;
+    font-size:clamp(26px,4vw,36px);color:var(--ink);line-height:1.2;
+  }
+  .sec-sub{margin-top:10px;color:var(--ink-soft);max-width:62ch;font-size:15px}
+
+  /* ===== About ===== */
+  .about-grid{display:grid;grid-template-columns:1fr;gap:32px}
+  .about-photo{
+    width:100%;max-width:340px;aspect-ratio:4/3;object-fit:cover;
+    border-radius:12px;border:1px solid var(--line);
+    box-shadow:0 6px 22px rgba(0,0,0,.08);display:block;
+  }
+  .about-text p{color:var(--ink-soft);font-size:16px;margin-bottom:16px}
+  .about-text p strong{color:var(--ink);font-weight:600}
+  .tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  .tag{
+    background:var(--accent-tint);color:var(--accent-deep);
+    padding:8px 14px;border-radius:100px;font-size:14px;font-weight:500;
+  }
+
+  /* ===== Research ===== */
+  .research-list{border-top:1px solid var(--line)}
+  .research-item{
+    display:grid;grid-template-columns:1fr;gap:6px;
+    padding:26px 0;border-bottom:1px solid var(--line);
+  }
+  .research-item .idx{
+    font-family:var(--serif);color:var(--accent);font-size:14px;
+  }
+  .research-item h3{
+    font-family:var(--serif);font-size:21px;font-weight:700;color:var(--ink);
+  }
+  .research-item p{color:var(--ink-soft);font-size:15px;margin-top:8px;max-width:72ch}
+  .ri-fig{margin:14px 0 0;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px}
+  .ri-fig img{width:100%;height:auto;border-radius:4px}
+  .ri-fig figcaption{font-size:12px;color:var(--ink-soft);margin-top:6px;line-height:1.5}
+  .research-link:hover .ri-fig{border-color:var(--accent)}
+  .research-link{cursor:pointer;transition:background .2s}
+  .research-link:hover{background:var(--accent-tint)}
+  .ri-more{display:inline-flex;align-items:center;gap:4px;margin-top:12px;font-size:14px;color:var(--accent);font-weight:600}
+  .ri-more::after{content:"→";transition:transform .15s}
+  .research-link:hover .ri-more::after{transform:translateX(4px)}
+
+  /* ===== Publications ===== */
+  .pub{border-bottom:1px solid var(--line);padding:20px 0;display:flex;gap:16px;flex-direction:column}
+  .pub .pmd{font-size:13px;color:var(--accent);font-weight:600;letter-spacing:.05em;flex:none}
+  .pub h4{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--ink)}
+  .pub .pauth{font-size:14px;color:var(--ink-soft);margin-top:4px}
+  .pub .pauth strong{color:var(--ink);font-weight:700}
+  .pub .psrc{font-size:13px;color:var(--ink-soft);margin-top:2px;font-style:italic}
+  .pub .pnote{font-size:13px;color:var(--accent);margin-top:6px}
+  .placeholder-note{
+    border:1px dashed var(--accent);background:var(--accent-tint);
+    color:var(--accent-deep);padding:14px 18px;border-radius:8px;
+    font-size:14px;margin-bottom:16px;
+  }
+
+  /* ===== Experience 时间轴 ===== */
+  .timeline{position:relative}
+  .timeline::before{
+    content:"";position:absolute;left:9px;top:8px;bottom:8px;width:2px;
+    background:var(--line);
+  }
+  .tl-item{position:relative;padding:0 0 32px 40px}
+  .tl-item::before{
+    content:"";position:absolute;left:2px;top:8px;width:16px;height:16px;
+    border-radius:50%;background:var(--surface);border:2px solid var(--accent);
+    box-sizing:border-box;
+  }
+  .tl-date{font-size:13px;color:var(--accent);font-weight:700;letter-spacing:.04em}
+  .tl-title{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);margin-top:4px}
+  .tl-place{font-size:14px;color:var(--ink-soft);margin-top:2px}
+  .tl-desc{font-size:14px;color:var(--ink-soft);margin-top:6px;max-width:70ch}
+  .tl-note{font-size:13px;color:var(--accent);margin-top:6px}
+
+  /* ===== Hobbies ===== */
+  .hobby-grid{display:grid;grid-template-columns:repeat(1,1fr);gap:20px}
+  .hobby-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    overflow:hidden;transition:transform .2s;
+  }
+  .hobby-card:hover{transform:translateY(-3px)}
+  .hobby-photo{width:100%;aspect-ratio:16/10;object-fit:contain;background:#ECEAE4}
+  .hobby-photo.cover{object-fit:cover;object-position:50% 28%}
+  .hobby-photo.music{object-position:50% 40%}
+  .hobby-body{padding:18px 20px 22px}
+  .hobby-body h3{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink)}
+  .hobby-body p{font-size:14px;color:var(--ink-soft);margin-top:6px}
+
+  /* ===== Game Mods ===== */
+  .mod-grid{display:grid;grid-template-columns:repeat(1,1fr);gap:16px}
+  .mod-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    padding:24px 26px;transition:transform .2s;
+  }
+  .mod-card:hover{transform:translateY(-3px)}
+  .mod-card .mod-game{
+    display:flex;align-items:center;gap:9px;
+    font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--accent);font-weight:700;
+  }
+  .mod-card .glogo{height:24px;width:auto;flex-shrink:0;object-fit:contain}
+  .mod-card .glogo.dark{height:24px;border-radius:5px}
+  .mod-card h3{font-family:var(--serif);font-size:19px;font-weight:700;color:var(--ink);margin-top:8px}
+  .mod-card p{font-size:14px;color:var(--ink-soft);margin-top:8px}
+  .mod-card .mod-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .mod-card .mod-tags span{
+    background:var(--accent-tint);color:var(--accent-deep);
+    padding:5px 12px;border-radius:100px;font-size:12px;font-weight:500;
+  }
+  .mod-card .dl-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+  .dlbtn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--accent);color:#fff;border:none;
+    padding:9px 18px;border-radius:100px;font-size:13.5px;font-weight:600;cursor:pointer;
+    text-decoration:none;transition:background .2s;
+  }
+  .dlbtn:hover{background:var(--accent-deep)}
+  .dlbtn svg{width:15px;height:15px;stroke:currentColor}
+  .ghbtn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:transparent;color:var(--ink-soft);border:1px solid var(--line);
+    padding:9px 18px;border-radius:100px;font-size:13.5px;font-weight:500;cursor:pointer;
+    text-decoration:none;transition:color .2s,border-color .2s;
+  }
+  .ghbtn:hover{color:var(--accent);border-color:var(--accent)}
+  .ghbtn svg{width:15px;height:15px;stroke:currentColor}
+  .modshots{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:flex-start}
+  .modshots img{flex:1 1 200px;min-width:0;height:auto;border-radius:8px;border:1px solid var(--line);background:#fff}
+  .planned-books{margin-top:16px;border-top:1px dashed var(--line);padding-top:13px}
+  .planned-books .dx-head{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px}
+  .book{padding:8px 0;border-bottom:1px dotted var(--line)}
+  .book:last-child{border-bottom:none}
+  .book .bm{display:block;font-size:11px;font-weight:700;color:var(--accent-deep);letter-spacing:.06em;margin-bottom:2px}
+  .book .bt{display:block;font-weight:600;color:var(--ink);font-size:13.5px;font-style:italic;line-height:1.35}
+  .book .ba{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px}
+  .devnote{margin-top:14px;font-size:12.5px;color:var(--ink-soft);border-left:3px solid var(--accent);background:var(--accent-tint);padding:9px 12px;border-radius:6px;line-height:1.6}
+  .diseases{margin-top:18px;border-top:1px dashed var(--line);padding-top:14px}
+  .diseases .dx-head{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:4px}
+  .diseases .dx-sub{font-size:12px;color:var(--ink-soft);margin-bottom:10px}
+  .diseases .dx-scroll{max-height:460px;overflow-y:auto;padding-right:6px;scrollbar-width:thin}
+  .disease{padding:11px 0;border-bottom:1px solid var(--line)}
+  .disease:last-child{border-bottom:none}
+  .disease .d-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .disease .dnum{font-size:11px;font-weight:700;color:var(--accent-deep);letter-spacing:.05em}
+  .disease .dname{font-weight:700;color:var(--ink);font-size:14px}
+  .disease .den{font-size:12.5px;color:var(--ink-soft);font-style:italic}
+  .disease .drow{font-size:12.5px;color:var(--ink-soft);line-height:1.6;margin-top:5px;padding-left:38px}
+  .disease .dlab{color:var(--accent);font-weight:600;margin-right:6px}
+
+  /* ===== Pets ===== */
+  .pet-grid{display:grid;grid-template-columns:repeat(1,1fr);gap:20px}
+  .pet-card{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+  .pet-photo{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:50% 30%}
+  .pet-info{padding:14px 18px}
+  .pet-info h3{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--ink)}
+  .pet-info p{font-size:13px;color:var(--ink-soft);margin-top:2px}
+
+  /* ===== Gallery ===== */
+  .gallery-grid{display:grid;grid-template-columns:repeat(1,1fr);gap:16px}
+  .gallery-photo{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px}
+
+  /* ===== 显示更多 / 收起 ===== */
+  .more-wrap .more-item{display:none}
+  .more-wrap.expanded .more-item{display:flex}
+  .showmore{
+    margin:24px auto 0;display:flex;align-items:center;gap:8px;
+    background:transparent;border:1px solid var(--line);color:var(--ink-soft);
+    padding:10px 22px;border-radius:100px;font-size:14px;cursor:pointer;
+    transition:border-color .2s,color .2s;
+  }
+  .showmore:hover{border-color:var(--accent);color:var(--accent)}
+  .showmore svg{width:15px;height:15px;stroke:currentColor;transition:transform .25s}
+  .showmore[aria-expanded="true"] svg{transform:rotate(180deg)}
+
+  /* ===== Contact ===== */
+  .contact-grid{display:grid;grid-template-columns:1fr;gap:20px}
+  .contact-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    padding:26px 28px;display:flex;gap:18px;align-items:flex-start;
+  }
+  .contact-card svg{width:24px;height:24px;stroke:var(--accent);flex:none;margin-top:4px}
+  .contact-card .cl{font-size:13px;color:var(--ink-soft);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+  .contact-card .cv{font-size:17px;color:var(--ink);margin-top:4px;font-weight:500}
+  .contact-card .cv a{border-bottom:1px solid var(--line);transition:border-color .2s,color .2s}
+  .contact-card .cv a:hover{border-color:var(--accent);color:var(--accent)}
+
+  footer{
+    border-top:1px solid var(--line);padding:40px 24px;text-align:center;
+    color:var(--ink-soft);font-size:13px;
+  }
+  footer .fname{font-family:var(--serif);color:var(--ink);font-size:15px;margin-bottom:6px}
+
+  /* ===== 弹窗 ===== */
+  .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:24px}
+  .modal.open{display:flex}
+  .modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+  .modal-panel{position:relative;background:var(--bg);max-width:720px;width:100%;max-height:86vh;overflow:auto;border-radius:16px;padding:40px 36px 36px;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  .modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;border:none;background:var(--accent-tint);color:var(--accent-deep);font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .modal-close:hover{background:var(--accent);color:#fff}
+  .modal-kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:10px}
+  .modal h2{font-family:var(--serif);font-size:clamp(22px,3.4vw,30px);color:var(--ink);line-height:1.25;margin-bottom:18px}
+  .modal-body p{color:var(--ink-soft);font-size:15.5px;line-height:1.75;margin-bottom:14px}
+  .modal-body p:last-child{margin-bottom:0}
+  .m-lead{font-size:16px;color:var(--ink);line-height:1.85;margin:0 0 18px}
+  .m-lead strong{color:var(--accent-deep)}
+  .m-lead2{color:var(--ink-soft);font-size:15px;line-height:1.8;margin:0 0 18px}
+  .m-approach{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px}
+  .m-tag{font-size:12.5px;padding:6px 12px;border-radius:999px;background:var(--accent-tint);color:var(--accent-deep);font-weight:600;border:1px solid var(--line)}
+  .study{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px 24px 20px;margin:0 0 18px}
+  .study-kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px}
+  .study h3{font-family:var(--serif);font-size:20px;color:var(--ink);font-weight:700;line-height:1.3;margin:0 0 8px}
+  .study .foc{color:var(--ink-soft);font-size:14.5px;line-height:1.7;margin:0 0 14px;border-left:2px solid var(--accent);padding-left:12px}
+  .study ul{list-style:none;padding:0;margin:0 0 6px}
+  .study li{position:relative;padding-left:20px;color:var(--ink-soft);font-size:14.5px;line-height:1.7;margin-bottom:9px}
+  .study li::before{content:"";position:absolute;left:0;top:.5em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .study li strong{color:var(--ink);font-weight:700}
+  .s-head{font-size:13.5px;color:var(--accent);font-weight:700;letter-spacing:.02em;margin:24px 0 8px;display:flex;align-items:center;gap:9px}
+  .s-head::before{content:"";width:14px;height:2px;background:var(--accent);border-radius:2px}
+  .s-head:first-child{margin-top:2px}
+  .study .para{color:var(--ink-soft);font-size:14.5px;line-height:1.78;margin-bottom:12px}
+  .study .para strong{color:var(--ink);font-weight:700}
+  .ex{background:var(--accent-tint);border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin:10px 0 16px;color:var(--ink-soft)}
+  .ex p{margin:0 0 4px;color:var(--ink-soft);font-size:13.5px;line-height:1.7}
+  .ex p:last-child{margin-bottom:0}
+  .ex .eln{font-weight:700;color:var(--accent-deep);margin-right:6px}
+  .fig{margin:2px 0 10px;color:var(--ink-soft);font-size:12.5px;font-style:italic;line-height:1.6}
+  .mfig{margin:14px 0 18px;padding:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+  .mfig img{width:100%;height:auto;display:block;border-radius:8px;background:#fff}
+  .mfig figcaption{font-size:12.5px;color:var(--ink-soft);font-style:italic;line-height:1.6;margin-top:10px}
+  .m-note{font-size:12.5px;color:var(--accent);margin-top:12px;letter-spacing:.02em}
+  .takeaway{border-left:3px solid var(--accent);background:var(--accent-tint);border-radius:0 12px 12px 0;padding:18px 20px;margin:6px 0 0}
+  .takeaway .tk-kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-deep);font-weight:700;margin-bottom:8px}
+  .takeaway p{color:var(--ink);font-size:15px;line-height:1.8;margin:0}
+
+  /* ===== 响应式 ===== */
+  @media (min-width:768px){
+    .hero{grid-template-columns:1.05fr .95fr;padding:110px 40px 50px}
+    .about-grid{grid-template-columns:300px 1fr;align-items:start}
+    .about-grid .about-photo{grid-column:1;grid-row:1/3}
+    .about-grid .about-text{grid-column:2}
+    .about-grid .tags{grid-column:2}
+    .research-item{grid-template-columns:64px 1fr 320px;column-gap:28px;align-items:start}
+    .hobby-grid{grid-template-columns:repeat(3,1fr)}
+    .mod-grid{grid-template-columns:repeat(2,1fr)}
+    .pet-grid{grid-template-columns:repeat(2,1fr)}
+    .gallery-grid{grid-template-columns:repeat(3,1fr)}
+    .contact-grid{grid-template-columns:repeat(3,1fr)}
+    .pub{flex-direction:row;align-items:baseline}
+    .pub .pmd{width:150px}
+  }
+  @media (max-width:768px){
+    .nav-links{
+      position:fixed;inset:60px 0 auto 0;flex-direction:column;gap:0;
+      background:var(--bg);border-bottom:1px solid var(--line);
+      padding:8px 24px 20px;transform:translateY(-130%);transition:transform .25s;
+    }
+    .nav-links.open{transform:translateY(0)}
+    .nav-links a{padding:12px 0;border-bottom:1px solid var(--line);font-size:16px}
+    .nav-toggle{display:block}
+    .lang-btn{padding:5px 9px;font-size:12px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .wave .bar{animation:none}
+    *{transition:none!important}
+  }
+  html[lang="en"] .d-head .den{display:none}
+  /* ===== 图片放大 ===== */
+  .zoomable{cursor:zoom-in}
+  .lightbox{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(15,18,20,.88)}
+  .lightbox.open{display:flex}
+  .lightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.4);cursor:zoom-out}
+  .lightbox-close{position:absolute;top:14px;right:18px;width:40px;height:40px;border:none;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;font-size:26px;line-height:1;cursor:pointer}
+  .lightbox-close:hover{background:rgba(255,255,255,.28)}
+  /* ===== 个人陈述 ===== */
+  .essay-list{display:grid;grid-template-columns:1fr;gap:16px}
+  .essay{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px 24px;cursor:pointer;transition:border-color .2s,transform .2s}
+  .essay:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .essay:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .essay-date{font-size:12px;letter-spacing:.12em;color:var(--accent);font-weight:600}
+  .essay-title{font-family:var(--serif);font-size:19px;color:var(--ink);margin-top:6px;line-height:1.4}
+  .essay-excerpt{font-size:14px;color:var(--ink-soft);margin-top:8px}
+  .essay-more{display:inline-block;margin-top:10px;font-size:14px;font-weight:600;color:var(--accent)}
+  .essay-more::after{content:" →"}
+  .essay-empty{padding:28px 24px;border:1px dashed var(--line);border-radius:10px;color:var(--ink-soft);font-size:14px;text-align:center}
+  .essay-full p{color:var(--ink);font-size:16px;line-height:1.95;margin-bottom:16px}
+</style>
+</head>
+<body>
+
+<!-- ===== 导航 ===== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#academic" class="brand" id="brandLink">Nathan&nbsp;·&nbsp;Phonetics</a>
+    <div class="nav-links" id="navLinks">
+      <a href="#academic" class="page-link" data-page="academic" data-i18n="nav.academic">学术</a>
+      <a href="#life" class="page-link" data-page="life" data-i18n="nav.life">生活</a>
+      <a href="#contact" id="contactLink" data-i18n="nav.contact">联系</a>
+    </div>
+    <div class="nav-right">
+      <div class="lang-switch" id="langSwitch">
+        <button class="lang-btn" data-lang="zh" type="button">中文</button>
+        <button class="lang-btn" data-lang="en" type="button">English</button>
+        <button class="lang-btn" data-lang="ja" type="button">日本語</button>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="打开导航" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== 视图：学术 ===== -->
+<div class="view active" id="view-academic" data-view="academic">
+
+  <header class="hero">
+    <div>
+      <div class="hero-eyebrow" data-i18n="hero.eyebrow">Phonetics 语音学 音声学</div>
+      <div class="hero-name">
+        <h1>Nathan <span class="last">Wu</span></h1>
+        <span class="hero-ipa">[ˈneɪθən wuː]</span>
+      </div>
+      <p class="hero-role" data-i18n="hero.role">Ph.D student in Phonetics</p>
+      <p class="hero-loc">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        <span data-i18n="hero.loc">东广岛 · 日本广岛</span>
+      </p>
+      <p class="hero-desc" data-i18n="hero.desc">我的研究方向为韵律与语音变异。核心关注韵律作为一种认知资源，是如何被语言使用者调用与解读，并在跨语言、跨方言的比较框架下考察这类韵律策略的分布与功能。在语音变异方面，我主要研究通泰方言的颤音：通泰方言颤音的产出具有高度不稳定性，倾向于在低元音后出现，并表现出代际与性别差异。现阶段我借助贝叶斯建模，解析多重因素对颤音实现的共同影响。</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" data-scroll="contact" data-i18n="hero.btn.contact">联系我</button>
+        <button class="btn btn-ghost" data-scroll="publications" data-i18n="hero.btn.pub">查看发表</button>
+      </div>
+    </div>
+    <div class="hero-media">
+      <img class="hero-photo" src="assets/portrait-top.jpg" alt="Portrait of Nathan Wu">
+      <img src="assets/spectrogram.png" alt="Real-time spectrogram of a vowel followed by a trill" class="wave">
+    </div>
+  </header>
+
+  <div class="chips">
+    <button class="chip" data-scroll="about" data-i18n="chips.about">关于</button>
+    <button class="chip" data-scroll="research" data-i18n="chips.research">研究</button>
+    <button class="chip" data-scroll="publications" data-i18n="chips.pubs">发表</button>
+    <button class="chip" data-scroll="experience" data-i18n="chips.exp">经历</button>
+    <button class="chip" data-scroll="contact" data-i18n="chips.contact">联系</button>
+  </div>
+
+  <!-- 关于我 -->
+  <section id="about">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-kicker">About</div>
+        <h2 class="sec-title" data-i18n="about.title">关于我</h2>
+        <p class="sec-sub" data-i18n="about.sub">广岛大学语音学博士生，研究方向为韵律与语用交互、言语感知与社会变异语音学。</p>
+      </div>
+      <div class="about-grid">
+        <img class="about-photo" src="assets/portrait.jpg" alt="Portrait of Nathan Wu">
+        <div class="about-text">
+          <p data-i18n="about.p1">本科毕业于<strong>江苏师范大学</strong>，获英语学士学位；硕士毕业于<strong>南京航空航天大学</strong>，获语言学硕士学位。现于<strong>广岛大学</strong>人文社会科学研究科<strong>山根典子（Yamane Noriko）</strong>实验室攻读语音学博士学位。</p>
+          <p data-i18n="about.p2">我的核心研究方向是<strong>韵律与语用的交互</strong>，同时关注<strong>言语感知</strong>与<strong>社会变异语音学</strong>。熟练使用 Praat、Python、R、E-Prime，主要采用 GAMM、贝叶斯统计模型开展数据分析。工作语言为汉语、英语；日语可听说读写，暂无法独立完成学术写作；德语 A2 水平。</p>
+        </div>
+        <div class="tags">
+          <span class="tag">Prosody &amp; Pragmatics</span>
+          <span class="tag">Trill Consonants</span>
+          <span class="tag">Speech Perception</span>
+          <span class="tag">Social Variation</span>
+          <span class="tag">GAMM</span>
+          <span class="tag">Bayesian Modeling</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 研究 -->
+  <section id="research">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-kicker">Research</div>
+        <h2 class="sec-title">Research Interests</h2>
+        <p class="sec-sub">My research centers on two directions: the prosody–pragmatics interface and phonetic variation in trill consonants.</p>
+      </div>
+      <div class="research-list">
+        <div class="research-item research-link" data-detail="r1" tabindex="0" role="button" aria-haspopup="dialog">
+          <div class="idx">01</div>
+          <div>
+            <h3>Prosody &amp; Pragmatics Interface</h3>
+            <p>Examining how prosody is recruited and interpreted as a cognitive resource by language users, and how it interacts with pragmatic meaning—analyzing, from a cross-linguistic and cross-dialectal perspective, how prosodic strategies shape utterance meaning and information structure.</p>
+            <span class="ri-more">More details</span>
+          </div>
+          <figure class="ri-fig"><img src="assets/figures/hao-f0-contours.png" alt="F0 contours of the Mandarin interjection hao across six stance types" loading="lazy"><figcaption>F0 contours of <em>hao</em> 好 across six stance types</figcaption></figure>
+        </div>
+        <div class="research-item research-link" data-detail="r2" tabindex="0" role="button" aria-haspopup="dialog">
+          <div class="idx">02</div>
+          <div>
+            <h3>Trill Consonants</h3>
+            <p>Studying the production and phonetic variation of trills in languages such as the Tongtai dialects: trill production is highly unstable, tends to occur after low vowels, and shows intergenerational and gender differences; I currently use Bayesian modeling to analyze how multiple factors jointly shape trill realization.</p>
+            <span class="ri-more">More details</span>
+          </div>
+          <figure class="ri-fig"><img src="assets/figures/trill-spectrogram.png" alt="Spectrogram of a trill [r] between a vowel and an approximant" loading="lazy"><figcaption>Spectrogram of a trill [r]</figcaption></figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 发表 -->
+  <section id="publications">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-kicker">Publications</div>
+        <h2 class="sec-title" data-i18n="pub.title">发表</h2>
+        <p class="sec-sub" data-i18n="pub.sub">已收录的论文与会议报告。点「显示更多」可查看全部。</p>
+      </div>
+      <div class="pub-list more-wrap" id="pubMore">
+        <div class="pub">
+          <span class="pmd">ISAPh 2026 · PROCEEDINGS</span>
+          <div>
+            <h4>Pitch Prominence of Focus in Japanese: Trained vs. Untrained Speakers</h4>
+            <p class="pauth">Makino, Toko · Yamane, Noriko · <strong>Wu, Siyu</strong></p>
+            <p class="psrc">Proceedings of the International Symposium on Applied Phonetics (ISAPh 2026)</p>
+          </div>
+        </div>
+        <div class="pub">
+          <span class="pmd">ISAPh 2026 · PRESENTATION</span>
+          <div>
+            <h4>Prosodic Features of Chinese Negative Response Word bu</h4>
+            <p class="pauth"><strong>Wu, Siyu</strong> · Yamane, Noriko</p>
+            <p class="psrc">International Symposium on Applied Phonetics (ISAPh 2026)</p>
+          </div>
+        </div>
+        <div class="pub more-item">
+          <span class="pmd">DSIE 2024 · PROCEEDINGS</span>
+          <div>
+            <h4>Prosodic Features of Stance-Taking in Tonal Languages: Examples from Mandarin Interjection hao</h4>
+            <p class="pauth"><strong>Wu, Siyu</strong> · Zhang, Liang · Wang, Zhengxin · Xu, Yizhong</p>
+            <p class="psrc">Proceedings of Frontiers in Artificial Intelligence and Applications (IOS Press)</p>
+          </div>
+        </div>
+        <div class="pub more-item">
+          <span class="pmd">ACE 2024 · PROCEEDINGS</span>
+          <div>
+            <h4>Proper Modalities of Input Facilitate Incidental Vocabulary Acquisition: Evidence From Advanced Chinese EFL Learners</h4>
+            <p class="pauth">He, Ying · <strong>Wu, Siyu</strong></p>
+            <p class="psrc">Proceedings of the Asian Conference on Education (ACE2024), IAFOR</p>
+          </div>
+        </div>
+        <div class="pub more-item">
+          <span class="pmd">ASA 2024 · PRESENTATION</span>
+          <div>
+            <h4>Phonetics relating stance-taking in tonal languages: examples from Mandarin Interjections</h4>
+            <p class="pauth"><strong>Wu, Siyu</strong></p>
+            <p class="psrc">186th Meeting of the Acoustical Society of America (Ottawa, Canada)</p>
+          </div>
+        </div>
+      </div>
+      <button class="showmore" data-target="pubMore" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        <span class="sm-text" data-i18n="showmore.more">显示更多</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 学术经历 -->
+  <section id="experience">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-kicker">Experience</div>
+        <h2 class="sec-title" data-i18n="exp.title">学术经历</h2>
+        <p class="sec-sub" data-i18n="exp.sub">从本科、硕士到博士三个阶段的教育与研究经历。</p>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-date">2025 — Now</div>
+          <div class="tl-title" data-i18n="tl1.title">广岛大学 · 人文社会科学研究科 · 语言学（博士在读）</div>
+          <div class="tl-place">Hiroshima University, Japan</div>
+          <div class="tl-desc" data-i18n="tl1.desc">研究方向：韵律与语音变异、颤音；贝叶斯统计建模。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2022 — 2025</div>
+          <div class="tl-title" data-i18n="tl2.title">南京航空航天大学 · 外国语学院 · 外国语言学及应用语言学</div>
+          <div class="tl-place" data-i18n="tl2.place">南京航空航天大学</div>
+          <div class="tl-desc" data-i18n="tl2.desc">硕士学位</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2018 — 2022</div>
+          <div class="tl-title" data-i18n="tl3.title">江苏师范大学 · 敬文书院 · 英语教育</div>
+          <div class="tl-place" data-i18n="tl3.place">江苏师范大学</div>
+          <div class="tl-desc" data-i18n="tl3.desc">优等学士学位</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 联系 -->
+  <section id="contact">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-kicker">Contact</div>
+        <h2 class="sec-title" data-i18n="contact.title">联系我</h2>
+        <p class="sec-sub" data-i18n="contact.sub">学术合作、讨论或任何想聊的话题，欢迎联系。</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+          <div>
+            <div class="cl">Email</div>
+            <div class="cv"><a href="mailto:d250613@hiroshima-u.ac.jp">d250613@hiroshima-u.ac.jp</a></div>
+          </div>
+        </div>
+        <div class="contact-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5h8a4 4 0 0 1 0 8H4"/><path d="M11 13l5 6"/><path d="M15 5h5v6h-3"/></svg>
+          <div>
+            <div class="cl">ResearchGate</div>
+            <div class="cv"><a href="https://www.researchgate.net/profile/Siyu-Wu-47" target="_blank" rel="noopener">Siyu Wu</a></div>
+          </div>
+        </div>
+        <div class="contact-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.2-7-11a7 7 0 0 1 14 0c0 5.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+          <div>
+            <div class="cl" data-i18n="contact.loclabel">Location</div>
+            <div class="cv" data-i18n="contact.loc">东广岛 · Hiroshima, Japan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /view-academic -->
+
+<!-- ===== 视图：生活 ===== -->
+<div class="view" id="view-life" data-view="life">
+
+  <div class="life-hero">
+    <div class="life-kicker">Life</div>
+    <h2 class="life-title" data-i18n="life.title">学术之外的生活</h2>
+    <p class="life-sub" data-i18n="life.sub">兴趣爱好、游戏 Mod、宠物与照片——这些是我学术之外的色彩。每个板块都在随时更新，旧内容保留在「显示更多」里。</p>
+  </div>
+
+  <div class="chips">
+    <button class="chip" data-scroll="hobbies" data-i18n="lifechips.hobbies">兴趣</button>
+    <button class="chip" data-scroll="essays" data-i18n="lifechips.essays">个人随笔</button>
+    <button class="chip" data-scroll="mods" data-i18n="lifechips.mods">游戏 Mod</button>
+    <button class="chip" data-scroll="pets" data-i18n="lifechips.pets">宠物</button>
+    <button class="chip" data-scroll="gallery" data-i18n="lifechips.gallery">相册</button>
+  </div>
+
+  <!-- 兴趣爱好 -->
+  <section id="hobbies">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-kicker">Hobbies</div>
+        <h2 class="sec-title" data-i18n="hobbies.title">兴趣爱好</h2>
+        <p class="sec-sub" data-i18n="hobbies.sub">学术之外的生活色彩。</p>
+      </div>
+      <div class="hobby-grid">
+        <div class="hobby-card">
+          <img class="hobby-photo" src="assets/hobbies/calligraphy.jpg" alt="Calligraphy of Yueyang Lou Ji (Memorial to Yueyang Tower)" loading="lazy">
+          <div class="hobby-body">
+            <h3 data-i18n="hobby1.title">书法</h3>
+            <p data-i18n="hobby1.desc">写的是《岳阳楼记》。江湖书法，自娱自乐！</p>
+          </div>
+        </div>
+        <div class="hobby-card">
+          <img class="hobby-photo cover" src="assets/hobbies/mushoku-tensei.jpg" alt="Illustration of Eris from Mushoku Tensei" loading="lazy">
+          <div class="hobby-body">
+            <h3 data-i18n="hobby2.title">日本动漫</h3>
+            <p data-i18n="hobby2.desc">我很喜欢日本动漫，但已经许多年没有看过了。目前只看《无职转生》，这是我最喜欢的作品。</p>
+          </div>
+        </div>
+        <div class="hobby-card">
+          <img class="hobby-photo cover music" src="assets/hobbies/nagabuchi.jpg" alt="Tsuyoshi Nagabuchi, All Night Concert at Sakurajima (2004)" loading="lazy">
+          <div class="hobby-body">
+            <h3 data-i18n="hobby3.title">音乐</h3>
+            <p data-i18n="hobby3.desc">最喜欢长渕刚（Nagabuchi Tsuyoshi）。他的歌非常有力量，让人回味苦涩的同时充满斗志。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 个人陈述 -->
+  <section id="essays">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-kicker">Essays</div>
+        <h2 class="sec-title" data-i18n="essays.title">个人随笔</h2>
+      </div>
+      <div class="essay-list more-wrap" id="essayMore">
+        <!--
+          新增文章：复制下面这段 <article>，放在列表最上面（最新的在前）。
+          第 4 篇起给 article 加上 class="essay more-item"，会自动收进「显示更多」。
+          <article class="essay">
+            <div class="essay-date">2026-11-01</div>
+            <h3 class="essay-title">文章标题</h3>
+            <p class="essay-excerpt">一两句摘要，显示在列表里。</p>
+            <div class="essay-body" hidden>
+              <p>第一段正文。</p>
+              <p>第二段正文。</p>
+            </div>
+          </article>
+        -->
+      </div>
+      <p class="essay-empty" data-i18n="essays.empty">第一篇文章正在写作中，敬请期待。</p>
+      <button class="showmore" data-target="essayMore" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        <span class="sm-text" data-i18n="showmore.more">显示更多</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 游戏 Mod -->
+  <section id="mods">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-kicker">Game Mods</div>
+        <h2 class="sec-title" data-i18n="mods.title">游戏 Mod</h2>
+        <p class="sec-sub" data-i18n="mods.sub">我自己制作的游戏内容：用语言学的视角做游戏模组，也写各种游戏脚本。</p>
+      </div>
+      <div class="placeholder-note" data-i18n="mods.note">两个 Mod 均为原创自制。点击「下载 Mod」获取安装包，持续更新，新版本会在此处迭代。</div>
+      <div class="mod-grid">
+        <div class="mod-card">
+          <div class="mod-game"><img class="glogo" src="assets/logos/sims4.png" alt="The Sims 4"><span data-i18n="mod1.game">The Sims · 模拟人生</span></div>
+          <h3 data-i18n="mod1.title">语言学技能 Mod</h3>
+          <p data-i18n="mod1.desc">新增语言学技能（0–3 级）与两本可阅读书籍：《An Introduction to Language》可将技能升至 2 级，2 级升 3 级需阅读《A Course in Linguistics》。语言学技能对魅力、辩论、写作有巨额加成。当前到 3 级，后续将扩展至 10 级、加入更多语言学书籍，并纳入大学 DLC 与职业路径。持续更新中。</p>
+          <div class="mod-tags"><span>Linguistics</span><span>Skill</span><span>Books</span><span>University DLC</span></div>
+          <div class="modshots">
+            <img src="assets/modshots/sims4-skill.png" alt="Sims 4 Linguistics skill panel">
+            <img src="assets/modshots/sims4-books.png" alt="Buying linguistics books in Sims 4">
+          </div>
+          <div class="planned-books">
+            <div class="dx-head" data-i18n="mod1.books">预计更新的书籍</div>
+            <div class="book"><span class="bm" data-i18n="book.0">语音学</span><span class="bt">A Course in Phonetics</span><span class="ba">Peter Ladefoged · Keith Johnson</span></div>
+            <div class="book"><span class="bm" data-i18n="book.1">音系学</span><span class="bt">Understanding Phonology</span><span class="ba">Carlos Gussenhoven · Haike Jacobs</span></div>
+            <div class="book"><span class="bm" data-i18n="book.2">形态学</span><span class="bt">What is Morphology?</span><span class="ba">Mark Aronoff · Kirsten Fudeman</span></div>
+            <div class="book"><span class="bm" data-i18n="book.3">句法学</span><span class="bt">Syntax: A Generative Introduction</span><span class="ba">Andrew Carnie</span></div>
+            <div class="book"><span class="bm" data-i18n="book.4">语义学</span><span class="bt">Semantics</span><span class="ba">John I. Saeed</span></div>
+            <div class="book"><span class="bm" data-i18n="book.5">语用学</span><span class="bt">Pragmatics</span><span class="ba">George Yule</span></div>
+            <div class="book"><span class="bm" data-i18n="book.6">社会语言学</span><span class="bt">An Introduction to Sociolinguistics</span><span class="ba">Ronald Wardhaugh</span></div>
+            <div class="book"><span class="bm" data-i18n="book.7">历史语言学</span><span class="bt">Historical Linguistics: An Introduction</span><span class="ba">Lyle Campbell</span></div>
+          </div>
+          <p class="devnote" data-i18n="mod1.devnote">开发《模拟人生》Mod 涉及模块较多、测试流程较长，整体比较复杂、耗时较久；新内容会分批更新，敬请期待。</p>
+          <div class="dl-actions">
+            <a class="dlbtn" href="downloads/sims4-mod.zip" download>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg>
+              <span data-i18n="mods.dl">下载 Mod</span>
+            </a>
+          </div>
+        </div>
+        <div class="mod-card">
+          <div class="mod-game"><img class="glogo dark" src="assets/logos/project-hospital.png" alt="Project Hospital"><span>Project Hospital</span></div>
+          <h3 data-i18n="mod2.title">ER 疾病扩展 Mod</h3>
+          <p data-i18n="mod2.desc">降低原版 ER 疾病出现频率，新增 66 种疾病，其中含 10 种语言学梗疾病：花园路径综合征、中心嵌套溢出、岛屿约束违例、语迹丢失综合征、麦格克眩晕、首音互换综合征、元音大推移综合征、舌尖颤音过劳、语义饱和症、三声变调失序。</p>
+          <div class="mod-tags"><span>Project Hospital</span><span>66 Diseases</span><span>Linguistics</span></div>
+          <div class="modshots">
+            <img src="assets/modshots/ph-great-vowel-shift.png" alt="Project Hospital: Great Vowel Shift Syndrome diagnosis">
+          </div>
+          <div class="diseases">
+            <div class="dx-head" data-i18n="dx.head">10 种语言学疾病</div>
+            <div class="dx-sub" data-i18n="dx.sub">由语言学理论与音韵现象衍生出的趣味病症——症状、确诊与专属治疗。</div>
+            <div class="dx-scroll">
+              <div class="disease">
+                <div class="d-head"><span class="dnum">01</span><span class="dname" data-i18n="d1.name">花园路径综合征</span><span class="den">Garden-Path Syndrome</span></div>
+                <p class="drow"><span class="dlab" data-i18n="dl.theory">理论梗</span><span data-i18n="d1.theory">花园路径句、最小附着原则</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.sym">症状</span><span data-i18n="d1.sym">意识混乱 60% · 头痛 50% · 过劳 40% · 恶心 35%</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.dx">确诊</span><span data-i18n="d1.dx">评估 → 晚闭合歧义下回溯重分析失败（最小附着被强制锁定）</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.tx">治疗</span><span data-i18n="d1.tx">逗号注射（在歧义点补标点）、韵律断句疗法</span></p>
+              </div>
+              <div class="disease">
+                <div class="d-head"><span class="dnum">02</span><span class="dname" data-i18n="d2.name">中心嵌套溢出</span><span class="den">Center-Embedding Overflow</span></div>
+                <p class="drow"><span class="dlab" data-i18n="dl.theory">理论梗</span><span data-i18n="d2.theory">递归、依存局域成本</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.sym">症状</span><span data-i18n="d2.sym">头晕 65% · 意识混乱 55% · 出汗 40% · 晕厥 15%</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.dx">确诊</span><span data-i18n="d2.dx">神经系统检查 → 三重中心嵌套下语法栈溢出（依存局域成本超限）</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.tx">治疗</span><span data-i18n="d2.tx">句法扁平化（拆成短句）、工作记忆栈清空</span></p>
+              </div>
+              <div class="disease">
+                <div class="d-head"><span class="dnum">03</span><span class="dname" data-i18n="d3.name">岛屿约束违例</span><span class="den">Island Constraint Violation</span></div>
+                <p class="drow"><span class="dlab" data-i18n="dl.theory">理论梗</span><span data-i18n="d3.theory">Ross 的岛屿约束</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.sym">症状</span><span data-i18n="d3.sym">头痛 55% · 恶心 45% · 意识混乱 40% · 易怒 40%</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.dx">确诊</span><span data-i18n="d3.dx">评估 + 言语倾听 → wh 语迹跨越复杂名词短语岛（子邻接条件阻断）</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.tx">治疗</span><span data-i18n="d3.tx">复指代词挽救疗法（用代词「救出」被困成分）</span></p>
+              </div>
+              <div class="disease">
+                <div class="d-head"><span class="dnum">04</span><span class="dname" data-i18n="d4.name">语迹丢失综合征</span><span class="den">Trace Deletion Syndrome</span></div>
+                <p class="drow"><span class="dlab" data-i18n="dl.theory">理论梗</span><span data-i18n="d4.theory">Grodzinsky 的语迹删除假说</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.sym">症状</span><span data-i18n="d4.sym">意识混乱 55% · 头晕 50% · 言语不清 40% · 焦虑 35%</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.dx">确诊</span><span data-i18n="d4.dx">神经系统检查 + 言语倾听 → 被动句 NP 移位语迹缺失，题元角色指派反转（施受混淆）</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.tx">治疗</span><span data-i18n="d4.tx">映射疗法（把成分重新映射回题元角色）</span></p>
+              </div>
+              <div class="disease">
+                <div class="d-head"><span class="dnum">05</span><span class="dname" data-i18n="d5.name">麦格克眩晕</span><span class="den">McGurk Vertigo</span></div>
+                <p class="drow"><span class="dlab" data-i18n="dl.theory">理论梗</span><span data-i18n="d5.theory">视听整合的麦格克效应</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.sym">症状</span><span data-i18n="d5.sym">头晕 80% · 恶心 60% · 视力模糊 45% · 平衡感差 40% · 耳鸣 35%</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.dx">确诊</span><span data-i18n="d5.dx">神经系统检查 + 耳部检查 → 视听整合冲突：听 /ba/ 加看 /ga/ 感知为 /da/</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.tx">治疗</span><span data-i18n="d5.tx">闭眼聆听疗法、抗组胺药</span></p>
+              </div>
+              <div class="disease">
+                <div class="d-head"><span class="dnum">06</span><span class="dname" data-i18n="d6.name">首音互换综合征</span><span class="den">Spoonerism Syndrome</span></div>
+                <p class="drow"><span class="dlab" data-i18n="dl.theory">理论梗</span><span data-i18n="d6.theory">斯普纳口误、Fromkin 口误库</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.sym">症状</span><span data-i18n="d6.sym">言语不清 65% · 焦虑 55% · 出汗 40% · 易怒 30%</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.dx">确诊</span><span data-i18n="d6.dx">言语倾听 → 音节首辅音同位置换位（如 a half-formed wish 说成 a half-warmed fish）</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.tx">治疗</span><span data-i18n="d6.tx">逆序复述疗法、抗焦虑药</span></p>
+              </div>
+              <div class="disease">
+                <div class="d-head"><span class="dnum">07</span><span class="dname" data-i18n="d7.name">元音大推移综合征</span><span class="den">Great Vowel Shift Syndrome</span></div>
+                <p class="drow"><span class="dlab" data-i18n="dl.theory">理论梗</span><span data-i18n="d7.theory">元音大推移</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.sym">症状</span><span data-i18n="d7.sym">头晕 70% · 言语不清 60% · 平衡感差 45% · 乏力 40% · 意识混乱 30%</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.dx">确诊</span><span data-i18n="d7.dx">神经系统检查 + 言语倾听 → 长元音链式上移，F1/F2 元音空间面积塌缩</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.tx">治疗</span><span data-i18n="d7.tx">元音三角校准（i/a/u 定点复述）、休息</span></p>
+              </div>
+              <div class="disease">
+                <div class="d-head"><span class="dnum">08</span><span class="dname" data-i18n="d8.name">舌尖颤音过劳</span><span class="den">Apical Trill Fatigue</span></div>
+                <p class="drow"><span class="dlab" data-i18n="dl.theory">理论梗</span><span data-i18n="d8.theory">颤音（我的研究方向）</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.sym">症状</span><span data-i18n="d8.sym">过劳 65% · 咽喉痛 50% · 震颤 40% · 声音嘶哑 40% · 肌肉疼痛 35%</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.dx">确诊</span><span data-i18n="d8.dx">喉镜 + 言语倾听 → 舌尖颤动周期偏离 25–35 ms 常模，气动-弹性振动失稳</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.tx">治疗</span><span data-i18n="d8.tx">伯努利气流调节、休息</span></p>
+              </div>
+              <div class="disease">
+                <div class="d-head"><span class="dnum">09</span><span class="dname" data-i18n="d9.name">语义饱和症</span><span class="den">Semantic Satiation</span></div>
+                <p class="drow"><span class="dlab" data-i18n="dl.theory">理论梗</span><span data-i18n="d9.theory">重复一个词后词义消失</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.sym">症状</span><span data-i18n="d9.sym">意识混乱 50% · 焦虑 55% · 头晕 45% · 恶心 30%</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.dx">确诊</span><span data-i18n="d9.dx">评估 + 言语倾听 → 重复复述后词义激活衰减</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.tx">治疗</span><span data-i18n="d9.tx">同义词替换疗法、镇静药</span></p>
+              </div>
+              <div class="disease">
+                <div class="d-head"><span class="dnum">10</span><span class="dname" data-i18n="d10.name">三声变调失序</span><span class="den">Tone 3 Sandhi Disorder</span></div>
+                <p class="drow"><span class="dlab" data-i18n="dl.theory">理论梗</span><span data-i18n="d10.theory">连读变调（上声 + 上声）</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.sym">症状</span><span data-i18n="d10.sym">言语不清 50% · 声音嘶哑 40% · 焦虑 40% · 咽喉痛 35% · 头痛 30%</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.dx">确诊</span><span data-i18n="d10.dx">言语倾听 + 喉镜 → 连续上声变调失败（T3 T3 应变 T2 T3），基频轮廓错位</span></p>
+                <p class="drow"><span class="dlab" data-i18n="dl.tx">治疗</span><span data-i18n="d10.tx">音高爬坡训练</span></p>
+              </div>
+            </div>
+          </div>
+          <div class="dl-actions">
+            <a class="dlbtn" href="downloads/project-hospital-mod.zip" download>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg>
+              <span data-i18n="mods.dl">下载 Mod</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 宠物 -->
+  <section id="pets">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-kicker">Pets</div>
+        <h2 class="sec-title" data-i18n="pets.title">我的宠物</h2>
+        <p class="sec-sub" data-i18n="pets.sub">我的两只猫。</p>
+      </div>
+      <div class="pet-grid">
+        <div class="pet-card">
+          <img class="pet-photo" src="assets/pets/archangeli.jpg" alt="Archangeli, a grey and white long-haired cat" loading="lazy">
+          <div class="pet-info">
+            <h3>Archangeli</h3>
+            <p data-i18n="pet1.desc">小母猫，2024 年 8 月 6 日出生，妈妈是布偶，爸爸是美短。2026 年 3 月 Juliet 到家后，她离家出走，再也没有回来。</p>
+          </div>
+        </div>
+        <div class="pet-card">
+          <img class="pet-photo" src="assets/pets/juliet.jpg" alt="Juliet, an orange and white cat asleep on a quilt" loading="lazy">
+          <div class="pet-info">
+            <h3>Juliet</h3>
+            <p data-i18n="pet2.desc">公猫，中华田园猫，2026 年 1 月 12 日出生。汉语里的「橘」和 Ju 谐音，因此取名 Juliet。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 相册 -->
+  <section id="gallery">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-kicker">Gallery</div>
+        <h2 class="sec-title" data-i18n="gallery.title">照片墙</h2>
+        <p class="sec-sub" data-i18n="gallery.sub">生活与研究的影像记录。</p>
+      </div>
+      <div class="gallery-grid more-wrap" id="galleryMore">
+        <img class="gallery-photo" src="assets/gallery/gallery-08.jpg" alt="Mirror selfie after a workout" loading="lazy" style="object-position:50% 25%">
+        <img class="gallery-photo" src="assets/gallery/gallery-01.jpg" alt="Banner for the 100th anniversary meeting of the Phonetic Society of Japan" loading="lazy" style="object-position:50% 28%">
+        <img class="gallery-photo" src="assets/gallery/gallery-02.jpg" alt="Fried pork chop noodles with a fried egg" loading="lazy" style="object-position:50% 50%">
+        <img class="gallery-photo" src="assets/gallery/gallery-03.jpg" alt="Togetsukyo Bridge, Arashiyama, Kyoto" loading="lazy" style="object-position:50% 50%">
+        <img class="gallery-photo" src="assets/gallery/gallery-04.jpg" alt="Riverside kawadoko dining under lanterns, Kibune, Kyoto" loading="lazy" style="object-position:50% 50%">
+        <img class="gallery-photo" src="assets/gallery/gallery-05.jpg" alt="Archangeli sitting under a chair" loading="lazy" style="object-position:50% 35%">
+        <img class="gallery-photo more-item" src="assets/gallery/gallery-06.jpg" alt="Nathan in front of Slottman Hall with a GBL banner" loading="lazy" style="object-position:45% 40%">
+        <img class="gallery-photo more-item" src="assets/gallery/gallery-07.jpg" alt="Nathan at a temple with a pagoda behind" loading="lazy" style="object-position:50% 25%">
+        <img class="gallery-photo more-item" src="assets/gallery/gallery-09.jpg" alt="Archangeli as a kitten" loading="lazy" style="object-position:50% 40%">
+      </div>
+      <button class="showmore" data-target="galleryMore" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        <span class="sm-text" data-i18n="showmore.more">显示更多</span>
+      </button>
+    </div>
+  </section>
+
+</div><!-- /view-life -->
+
+<footer>
+  <div class="fname">Nathan · Phonetics Research</div>
+  <div>© <span id="year"></span> Nathan. <span data-i18n="footer.rights">版权所有</span></div>
+</footer>
+
+<!-- 研究方向详情弹窗 -->
+<div class="modal" id="detail-r1" role="dialog" aria-modal="true" aria-labelledby="r1modalTitle">
+  <div class="modal-backdrop" data-close-detail></div>
+  <div class="modal-panel">
+    <button class="modal-close" data-close-detail aria-label="Close">×</button>
+    <div class="modal-kicker">Research · 01</div>
+    <h2 id="r1modalTitle">Prosody &amp; Pragmatics Interface</h2>
+    <div class="modal-body">
+      <p class="m-lead">My research is situated at the <strong>interface between prosody and pragmatics</strong>. Two broad traditions have emerged in the study of pitch patterns: one treats pitch as a phonological object assigned grammatical meanings within formal phonology; the other embeds pitch in conversation, treating prosodic variation as a situated conversational resource within Conversation Analysis. My work proceeds along a third route—adopting a quantitative, experimental-phonetic methodology to uncover empirically how prosodic patterns, above all pitch, participate in conversational interpretation, while bringing the tools of formal pragmatics to bear on response particles and interjective stance markers, so that phonetic findings and formal accounts inform each other.</p>
+      <p class="m-lead2">The work forms a coherent experimental series on Mandarin monosyllabic pragmatic particles: first, the interjection <em>hao</em> 好 and how prosody encodes stance-taking in a tonal language; then the negative response word <em>bu</em> 不, following a theoretical-and-experimental structure with the full formal-pragmatic derivations of particle interchangeability.</p>
+
+      <div class="m-approach">
+        <span class="m-tag">Experimental phonetics</span>
+        <span class="m-tag">Formal pragmatics</span>
+        <span class="m-tag">Praat · ProsodyPro</span>
+        <span class="m-tag">LMM (R / lmerTest)</span>
+        <span class="m-tag">E-Prime</span>
+        <span class="m-tag">Corpus-based scenarios</span>
+      </div>
+
+      <div class="study">
+        <div class="study-kicker">Study 01</div>
+        <h3>Prosodic Encoding of Stance-Taking: The Mandarin Interjection <em>hao</em> 好</h3>
+
+        <div class="s-head">Research Question</div>
+        <p class="para">Stance—attitudes and opinions about the topic of discussion—is manifested in various aspects of verbal communication, and one of the most important things we do with words is to take a stance. Previous research on the phonetics of stance-taking has predominantly focused on non-tonal languages; comparatively little attention has been paid to tonal languages. This study examines the prosodic features of stance-taking in <em>hao</em>, a Mandarin secondary interjection that is lexically positive but capable of expressing a wide range of stances. The study addresses two research questions: (i) What are the acoustic-prosodic features of <em>hao</em> across its six stance types? and (ii) What are the similarities and differences between the phonetic realization of stance-taking in non-tonal and tonal languages, by the examples of English and Mandarin?</p>
+
+        <div class="s-head">Stance Framework</div>
+        <p class="para">Theoretically, the interjection <em>hao</em> encompasses six stance types: Appreciation, Agreement, Confirmation, Politeness, Concession, and Sarcasm. Appreciation, Agreement, and Confirmation represent positive stance, whereas Politeness, Concession, and Sarcasm denote negative stance. The order of stance strength is: Appreciation &gt; Agreement &gt; Confirmation, and Sarcasm &gt; Concession &gt; Politeness. Note that stance strength here is defined across stance types, rather than within a single type.</p>
+        <figure class="mfig"><img src="assets/figures/fig1.png" alt="Figure 1"><figcaption>Figure 1. Theoretical framework of hao's stance-taking (stance strength, stance type, and stance polarity).</figcaption></figure>
+
+        <div class="s-head">Method</div>
+        <p class="para">Fifteen native Mandarin speakers (9 males, 6 females, aged 21–25) participated in a controlled production experiment. Eighteen scenarios (three per stance type), revised from the BCC and CCL corpora, were adapted into dialogues in which <em>hao</em> always occurs in utterance-initial position. Recordings were digitized at 44.1 kHz / 16-bit in Praat. Mean F0, F0 range, mean intensity, and duration were extracted; F0 and intensity were sampled from the vowel at ten equidistant points, and duration from the syllable. All F0 values, including point data, were transformed into T-values for cross-speaker normalization appropriate to tonal data: T = ((log(TargetHz) − log(min)) / (log(max) − log(min))) × 5. Intensity was scaled to 70 dB. Time-normalized F0 and intensity contours were extracted using ProsodyPro. Point data across the six stance types were analysed in R with linear mixed-effects models (LMMs, lmerTest), with stance type and gender as fixed effects and speaker as random effect; Tukey post hoc tests were conducted, and contours were drawn with 95% confidence intervals, where non-overlap indicates a significant difference.</p>
+
+        <div class="s-head">Findings · Point Data</div>
+        <p class="para">The LMMs revealed systematic prosodic marking for stance polarity and stance strength. For mean F0, there was a significant main effect of stance type [F(5, 242) = 19.07, p &lt; 0.001]: Appreciation was significantly higher than the other five types, Agreement was higher than Confirmation and Politeness, and Sarcasm was higher than Confirmation and Politeness. For F0 range [F(5, 242) = 6.350, p &lt; 0.001], Confirmation and Politeness had narrower ranges than Appreciation, Agreement, and Sarcasm. For duration [F(5, 242) = 25.998, p &lt; 0.001], Concession and Sarcasm were robustly marked by syllable lengthening. For mean intensity [F(5, 242) = 8.559, p &lt; 0.001], Appreciation and Sarcasm were marked by increased intensity. Overall, Appreciation, Agreement, Concession, and Sarcasm are prosodically marked forms, while Confirmation and Politeness are unmarked.</p>
+        <figure class="mfig"><img src="assets/figures/fig2.png" alt="Figure 2"><figcaption>Figure 2. Statistical comparisons of mean F0, F0 range, duration, and mean intensity across the six stance types (with group-separation letters).</figcaption></figure>
+
+        <div class="s-head">Findings · F0 Contours</div>
+        <p class="para">Examination of the time-normalized F0 contours (Figure 3) reveals tone variation driven by emotional factors and pragmaticalization. All contours are dipping in shape, sharing an initial decline followed by a rise, but with notable differences. The positive stances Appreciation and Agreement exhibit brief-to-moderate declines followed by substantial rises, with Appreciation consistently higher in global F0. The negative stances Concession and Sarcasm show approximately congruent dipping contours, with Sarcasm's inflection point occurring slightly earlier and its endpoint slightly higher. By contrast, the pragmaticalized neutral uses Confirmation and Politeness show compressed, low-flat tonal shapes: Confirmation's contour declines dramatically with the inflection point furthest to the right and a final rise that remains much lower than other types, while Politeness stays relatively flat with a slight dip and a gradual, steady rise that ends at the same location as Confirmation. A canonical full L (third) tone exhibits a dipping contour (214) in isolation but is shortened to low and flat in natural speech; here, the flattened contours of Confirmation and Politeness reflect phonological reduction associated with pragmaticalization.</p>
+        <figure class="mfig"><img src="assets/figures/fig3.png" alt="Figure 3"><figcaption>Figure 3. F0 contours of hao: (a) by stance type; (b) positive stance; (c) negative stance.</figcaption></figure>
+
+        <div class="s-head">Findings · Intensity Contours</div>
+        <p class="para">The intensity contours (Figure 4) show that all stance types reach their peak around the middle of the utterance, yielding dome-shaped trajectories—except for Sarcasm. Among the positive stances, Appreciation shows the highest intensity throughout, Agreement occupies a middle position, and Confirmation has the lowest intensity, with its contour completely overlapped with Politeness. The pattern of Sarcasm is unique: it exhibits the latest and highest maximum intensity location. In its initial segment it grows like the other categories until roughly normalized time points 5–6, then ascends more precipitously than Concession to a secondary peak while the other contours begin their descent. Thus, although Concession and Sarcasm are statistically indistinguishable in point data and have highly similar F0 trajectories, their intensity contours differentiate them in detail, with Sarcasm's delayed, late intensity peak serving as a critical distinguishing cue.</p>
+        <figure class="mfig"><img src="assets/figures/fig4.png" alt="Figure 4"><figcaption>Figure 4. Intensity contours of hao: (a) by stance type; (b) positive stance; (c) negative stance.</figcaption></figure>
+
+        <div class="s-head">A Neutral Stance</div>
+        <p class="para">Because Confirmation and Politeness fail to achieve sufficient elevation in their F0 rises, their contours do not retain the canonical third-tone final rise, exhibiting instead a low, flat shape. The source of this tone variation appears semantic: Appreciation and Agreement maintain a close relationship with the original positive meaning; Concession and Sarcasm convey opposite meanings through prosodic lengthening; and Confirmation and Politeness are more susceptible to semantic reduction, functioning primarily as formulaic sequences. Pragmaticalization is typically accompanied by phonological reduction, manifested here as lower main pitch and reduced F0 targets for final rises. The nearly identical contours of Confirmation and Politeness (Figure 5), together with the low recognition accuracy of Politeness, provide substantial evidence for a neutral stance that previous studies had not considered. Stances are therefore classified as positive, neutral, and negative.</p>
+        <figure class="mfig"><img src="assets/figures/fig5.png" alt="Figure 5"><figcaption>Figure 5. Contours of the neutral stance: (a) F0 contours of Confirmation and Politeness; (b) intensity contours of Confirmation and Politeness.</figcaption></figure>
+
+        <div class="s-head">Cross-Linguistic Discussion</div>
+        <p class="para">The findings highlight typological divergence between tonal and non-tonal languages. English primarily uses duration and intensity to distinguish stance types, with F0 indicating stance strength and polarity; by contrast, Mandarin employs F0 to distinguish fine-grained stance types, with F0 serving as a primary acoustic parameter alongside duration. The languages also differ in their use of duration: English speakers mark positive stance by lengthening, whereas in Mandarin lengthening exclusively signals negative stance. Given that <em>hao</em> is semantically positive, it cannot express a negative stance without prosodic or contextual hints. Lengthening therefore functions as a type of markedness that provides the pragmatic hints necessary in the ostensive-inferential process, either intensifying or reversing the literal meaning. These findings deepen our understanding of how tonal languages prosodically encode stance-taking and provide theoretical insights for identifying stance information in natural speech.</p>
+      </div>
+
+      <div class="study">
+        <div class="study-kicker">Study 02</div>
+        <h3>Prosody and Pragmatics of the Negative Response Word <em>bu</em> 不</h3>
+
+        <div class="s-head">Interchangeability of Polar Particles</div>
+        <p class="para">Whether a speaker uses <em>yes</em> or <em>no</em> in response to a polar question (PQ) depends on one's real intentions. In responding to a positive polar question such as (1), <em>yes</em> confirms arrival while <em>no</em> denies it, and only the expected pairings are felicitous.</p>
+        <div class="ex">
+          <p><span class="eln">(1)</span>A: Are you coming to the party?</p>
+          <p>a. B: Yes, I am. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b. B: #No, I am.</p>
+          <p>c. B: #Yes, I am not. &nbsp; d. B: No, I am not.</p>
+        </div>
+        <p class="para">One notable property of polar particles, however, is that it is free to use positive or negative polar particles when answering negative polar questions, as in (2).</p>
+        <div class="ex">
+          <p><span class="eln">(2)</span>A: Are you not coming to the party?</p>
+          <p>a. B: Yes, I am. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b. B: No, I am.</p>
+          <p>c. B: Yes, I am not. &nbsp; d. B: No, I am not.</p>
+        </div>
+        <p class="para">Negative questions are only felicitous in the presence of contextual evidence for the negative answer. Answers such as (2b) are called double negation (DN) interpretations, and answers such as (2c) negative concord (NC) interpretations. This phenomenon is often called interchangeability. Previous research has primarily focused on English, with limited attention to Chinese. Consider (3):</p>
+        <div class="ex">
+          <p><span class="eln">(3)</span>A: Ta bu lai-le-ma? &nbsp; &lsquo;Is he not coming?&rsquo;</p>
+          <p>a. B: #Dui, lai-ne. &nbsp; &lsquo;Yes, he is coming.&rsquo;</p>
+          <p>b. B: Bu, lai-ne. &nbsp;&nbsp; &lsquo;No, he is coming.&rsquo;</p>
+          <p>c. B: Dui, bu lai. &nbsp;&nbsp; &lsquo;Yes, he is not coming.&rsquo;</p>
+          <p>d. B: Bu, bu lai. &nbsp;&nbsp; &lsquo;No, he is not coming.&rsquo;</p>
+        </div>
+        <p class="para">It can be seen that the combination of a positive polar particle with a positive answer is infelicitous in Chinese, in contrast to English, where such responses are perfectly natural. People also prefer the DN interpretation over the NC interpretation in Chinese, again contrasting with English, which prefers NC over DN. This may highlight a language-specific restriction and urges us to revise existing accounts of interchangeability.</p>
+
+        <div class="s-head">Prior Formal Accounts of Interchangeability</div>
+        <p class="para">Several theorists have sought to provide overarching explanations for interchangeability, attributing it to different formal mechanisms. I review these before presenting my own revision.</p>
+        <p class="para"><strong>Krifka (2013): propositional anaphora.</strong> Krifka argues that negative sentences introduce multiple antecedents for <em>yes</em> and <em>no</em> to pick up. <em>Yes</em> and <em>no</em> are propositional anaphora that stand in semantically for entire speech acts (the category Krifka calls ActP). A positive polar question makes available a single discourse referent <em>d</em> anchored to the TP, as in (5); in a negative polar question, two antecedents become available—<em>d</em> anchored to the embedded TP and <em>d′</em> anchored to the NegP, as in (6).</p>
+        <div class="ex">
+          <p><span class="eln">(5)</span>Is Jane coming?</p>
+          <p>simplified LF: [TP Jane is coming] &nbsp; ↦ &nbsp; d</p>
+          <p>a. Yes = assert (d) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [meaning: Jane is coming]</p>
+          <p>b. No = assert (¬d) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [meaning: Jane is not coming]</p>
+        </div>
+        <div class="ex">
+          <p><span class="eln">(6)</span>Is Jane not coming?</p>
+          <p>simplified LF: [NegP not [TP Jane is coming]] &nbsp; ↦ &nbsp; d′ &nbsp; ↦ &nbsp; d</p>
+          <p>a. (i) Yes = assert (d) &nbsp;&nbsp;&nbsp;&nbsp; [meaning: Jane is coming]</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;(ii) No = assert (¬d) &nbsp;&nbsp; [meaning: Jane is not coming]</p>
+          <p>b. (i) Yes = assert (d′) &nbsp;&nbsp;&nbsp; [meaning: Jane is not coming]</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;(ii) No = assert (¬d′) &nbsp; [meaning: Jane is coming]</p>
+        </div>
+        <p class="para">In (6a), <em>yes</em> asserts <em>d</em> and <em>no</em> asserts its negation; in (6b), <em>yes</em> asserts <em>d′</em> (equivalent to ¬<em>d</em>) and <em>no</em> asserts its negation. Under this analysis, interchangeability in negative contexts follows from the availability of two discourse referents.</p>
+        <p class="para"><strong>Kramer and Rawlins (2009).</strong> Building on Laka (1990), K&amp;R treat <em>yes</em> and <em>no</em> as adverbs in the specifier of a functional polarity head in the left periphery, with bare particles analysed as fragment answers. The use of <em>no</em> is constrained in that it can only occur if the following, optionally elided, sentence contains negation: <em>no</em> carries an uninterpretable negative feature (uNeg) that must enter a negative concord chain with an interpretable negative feature (iNeg). <em>Yes</em> does not contribute any features and is unconstrained by the polarity of the following sentence, as shown in (7) and (8).</p>
+        <div class="ex">
+          <p><span class="eln">(7)/(8)</span>A: Is Jane not[iNeg] coming?</p>
+          <p>a. B: [PolP No[uNeg] [She is not[iNeg] coming]]</p>
+          <p>b. B: [PolP Yes [TP She is not[iNeg] coming]]</p>
+        </div>
+        <p class="para">Both particles are therefore predicted to be acceptable in negative responses to negative questions. One issue is that this account only deals with one half of the interchangeability phenomenon, negative answers; and because <em>yes</em> imposes no syntactic requirement, nothing stops <em>yes</em> from appearing in negative responses to positive questions, contrary to fact (10).</p>
+        <div class="ex">
+          <p><span class="eln">(10)</span>A: Is Jane coming?</p>
+          <p>a. B: [PolP Yes [TP She is not[iNeg] coming]]</p>
+        </div>
+        <p class="para"><strong>Holmberg (2013; 2016).</strong> Like K&amp;R, Holmberg treats <em>yes</em> and <em>no</em> as specifiers of a functional projection, and analyses bare particles as fragment answers. <em>Yes</em> and <em>no</em> are operators that assign positive and negative values, respectively, to the polarity head of their complement. The polarity head contains a polarity variable that can take one of three values: Positive [+], negative [−], and open [±]. Positive polar questions have open polarity (11). Holmberg locates the source of interchangeability in a structural ambiguity: negation in English attaches at two different heights—high negation between TP and vP, and low negation adjoined to vP/VP (12).</p>
+        <div class="ex">
+          <p><span class="eln">(11)</span>A: Is[±] Jane coming?</p>
+          <p>a. B: [FocP Yes [PolP [+] [TP She is coming]]]</p>
+          <p>b. B: [FocP No [PolP [−] [TP She is not coming]]]</p>
+        </div>
+        <div class="ex">
+          <p><span class="eln">(12)</span>Structure for &lsquo;Is Jane not coming?&rsquo;</p>
+          <p>a. A: Is[±] Jane coming? (low-negation PQ)</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;(i) B: [FocP Yes [PolP [+] [TP She is [vP not coming]]]]</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;(ii) B: [FocP No [PolP [−] [TP She is [vP not coming]]]]</p>
+          <p>b. A: Is Jane not[−] coming? (high-negation PQ)</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;(i) B: [FocP Yes [PolP [+] [TP She is coming]]]</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;(ii) B: [FocP No [PolP [−] [TP She is not coming]]]</p>
+        </div>
+        <p class="para">The structural ambiguity of the two attachment heights of negation is what makes <em>yes</em> and <em>no</em> interchangeable in negative contexts in this account.</p>
+        <p class="para"><strong>Roelofsen and Farkas (2015).</strong> Unlike the accounts above, R&amp;F attribute interchangeability to the ability of polarity particles to encode two types of features: absolute polarity features ([+] and [−]) and relative discourse features ([agree] and [reverse]). <em>Yes</em> is capable of realizing [+] or [agree]; <em>no</em> is capable of realizing [−] or [reverse]. Only one of the features it realizes needs to be present to license the particle. The system is demonstrated in (13) and (14).</p>
+        <div class="ex">
+          <p><span class="eln">(13)</span>A: Petra passed the test.</p>
+          <p>a. B: Yes / #No, she did. &nbsp;&nbsp;&nbsp; [agree, +]</p>
+          <p>b. B: #Yes / No, she didn't. &nbsp; [reverse, −]</p>
+        </div>
+        <div class="ex">
+          <p><span class="eln">(14)</span>A: Petra didn't pass the test.</p>
+          <p>a. B: Yes / No, she didn't. &nbsp;&nbsp; [agree, −]</p>
+          <p>b. B: Yes / No, she DID. &nbsp;&nbsp;&nbsp;&nbsp; [reverse, +]</p>
+        </div>
+        <p class="para">In response to negative sentences, the two valid responses in (14) contain features that can be realized by either particle, so either particle can be used in either response—this is how R&amp;F explain interchangeability.</p>
+
+        <div class="s-head">A Revised Account with Chinese Materials</div>
+        <p class="para">Considering the Chinese facts in (3), there is reason to doubt the effectiveness of a purely semantic or syntactic analysis. It is important to include presuppositions in the analysis. In (15), when the presupposition is <em>not coming</em>, the acceptability of the responses is the same as for simple questions, meaning that it is the structure of negative questions, not the presuppositions, that causes interchangeability.</p>
+        <div class="ex">
+          <p><span class="eln">(15)</span>A: Ta hai lai-ma? &nbsp; &lsquo;Is he still coming?&rsquo; (speaker presupposes he would not come)</p>
+          <p>a. B: Dui, lai-ne. &nbsp; &lsquo;Yes, he is coming.&rsquo;</p>
+          <p>b. B: #Bu, lai-ne. &nbsp; &lsquo;No, he is coming.&rsquo;</p>
+          <p>c. B: #Dui, bu lai. &nbsp; &lsquo;Yes, he is not coming.&rsquo;</p>
+          <p>d. B: Bu, bu lai. &nbsp; &lsquo;No, he is not coming.&rsquo;</p>
+        </div>
+        <p class="para">Nevertheless, presuppositions play a key role in analysing interchangeability. My revised analysis is given in (16). I suppose that when the response agrees ([+]) with the questioner's presuppositions, the language unit being processed could be the TP or NegP in Krifka's (2013) sense; positive or negative particles can only be used to give values to TP or NegP, not to the presuppositions. If the response disagrees ([−]) with the questioner's presuppositions, the language unit being processed could only be NegP.</p>
+        <div class="ex">
+          <p><span class="eln">(16)</span>Is Jane not coming?</p>
+          <p>simplified LF: [NegP not [TP Jane is coming]] &nbsp; ↦ &nbsp; d′ &nbsp; ↦ &nbsp; d</p>
+          <p>a. (i) Yes, Jane is coming. &nbsp;&nbsp;&nbsp;&nbsp; [−] (Yes is used to affirm with the presupposition)</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;(ii) No, Jane is coming. &nbsp;&nbsp;&nbsp; [−] (No is used to negate NegP)</p>
+          <p>b. (i) Yes, Jane is not coming. &nbsp; [+] (Yes is used to affirm NegP)</p>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;(ii) No, Jane is not coming. &nbsp; [+] (No is used to negate TP)</p>
+        </div>
+        <p class="para">Crucially, since in English <em>yes</em> is more pragmatically interpretable, it can be used to give values to presuppositions; whereas in Chinese <em>dui</em> and <em>bu</em> are not interchangeable. If <em>dui</em> is changed to <em>kending-a</em> 肯定啊 (&lsquo;of course&rsquo;), the particles become interchangeable, as in (17). This evidence tells us that interchangeability is not merely a pragmatic or syntactic issue, but somehow needs insights from lexical semantics.</p>
+        <div class="ex">
+          <p><span class="eln">(17)</span>A: Ta bu lai-le-ma? &nbsp; &lsquo;Is he not coming?&rsquo;</p>
+          <p>a. B: Kending-a, lai-a. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lsquo;Of course, he is coming.&rsquo;</p>
+          <p>b. B: Kending-a, bu lai-le-a. &nbsp; &lsquo;Of course, he is not coming.&rsquo;</p>
+        </div>
+        <p class="para">Despite these differences in interchangeability being attributable to lexical semantics, DN, NC, and SN forms also exist in Chinese. It is still unclear whether they have distinct prosodic features. The next part of this research examines whether these different types of responses are expressed with different prosodies in Chinese, helping to explain how speakers use prosody to convey different meanings when replying to questions.</p>
+
+        <div class="s-head">Method</div>
+        <p class="para">To obtain the prosodic features of each interpretation, the experiment set a control group—simple negation (SN), the response to simple polar questions. Twenty native Mandarin speakers (10 males, 10 females, aged 18–25) from Jiangsu Province, China, participated; all were screened for speech and hearing disorders and mental health issues, and were verified right-handed. Each stimulus combined a scenario, a conversational prompt, and a targeted single-word response, designed to evoke specific interpretations within realistic contexts. Participants were instructed to pause at a designated point (&lsquo;___&rsquo;) so that acoustic analysis could concentrate specifically on the polar particle, minimizing extraneous prosodic influence. Six items were constructed per condition (SN, NC, DN). Recordings were collected with an AKG 3000 condenser microphone (44.1 kHz / 16-bit) and presented via E-Prime 2; in total, 360 target words (18 items × 20 participants) were recorded. F0 and intensity data were derived from vowels, duration from syllables; F0 was sampled at ten equidistant points, converted to T-values, duration normalized to each speaker's mean, and intensity normalized to 70 dB. Point data were analysed with LMMs with Type (SN/NC/DN) and gender as fixed effects and speaker as random effect; F0 contours were drawn with ggplot2 with 95% confidence intervals.</p>
+
+        <div class="s-head">Findings · Point Data</div>
+        <p class="para">For mean F0, the LMM showed no significant main effect of Type [F(2, 360) = 0.150, p = 0.861], but a significant main effect of gender (p = 0.011). For F0 range, there was a significant main effect [F(2, 360) = 23.142, p &lt; 0.001]: DN had a broader F0 range (T-units) than NC and SN [β(DN−NC) = 0.660, t = 5.898, p &lt; 0.001; β(DN−SN) = 0.624, t = 5.563, p &lt; 0.001]. For mean intensity [F(2, 360) = 4.253, p = 0.018], SN was lower than DN and NC [β(SN−DN) = −0.587 dB, p = 0.039; β(SN−NC) = −0.670 dB, p = 0.018]. For duration [F(2, 360) = 7.173, p = 0.002], DN had a longer duration than NC and SN [β(DN−SN) = 0.631, p = 0.003; β(DN−NC) = 0.692, p = 0.003]. Taken together, the marked reading DN is characterized by a broader F0 range, higher intensity, and longer duration, whereas SN—and, largely, NC—show more neutral prosodic profiles. The four point-data comparisons are shown in Figures 6–9.</p>
+        <figure class="mfig"><img src="assets/figures/fig6.png" alt="Figure 6"><figcaption>Figure 6. Statistical comparison of mean F0 across SN, NC, and DN.</figcaption></figure>
+        <figure class="mfig"><img src="assets/figures/fig7.png" alt="Figure 7"><figcaption>Figure 7. Statistical comparison of F0 range across SN, NC, and DN.</figcaption></figure>
+        <figure class="mfig"><img src="assets/figures/fig8.png" alt="Figure 8"><figcaption>Figure 8. Statistical comparison of mean intensity across SN, NC, and DN.</figcaption></figure>
+        <figure class="mfig"><img src="assets/figures/fig9.png" alt="Figure 9"><figcaption>Figure 9. Statistical comparison of duration across SN, NC, and DN.</figcaption></figure>
+
+        <div class="s-head">Findings · F0 Contours</div>
+        <p class="para">The time-normalized F0 contours of SN, NC, and DN are shown in Figure 10. All three contours represent the falling fourth-tone word <em>bu</em> and are generally similar in overall trend, but differ in specific details. Treating SN as the default contour, NC almost completely overlaps with SN, whereas DN shows significant differences from SN in both the first and second halves: the DN contour is significantly higher than SN before normalized time point 5, after which the two contours coincide, and then DN falls significantly below SN after time point 7. The starting points of the three contours are roughly similar, but they undergo different changes, with SN and NC coinciding at the endpoint, while DN has a lower ending point than both. The broader F0 range of DN is observable only in the contour graph.</p>
+        <figure class="mfig"><img src="assets/figures/fig10.png" alt="Figure 10"><figcaption>Figure 10. F0 contours of SN, NC, and DN for the Mandarin negative response word bu.</figcaption></figure>
+
+        <div class="s-head">Discussion</div>
+        <p class="para">Integrating the experimental findings back into the revised formal-pragmatic account, syntactic structure, presuppositional context, and lexical-semantic properties jointly determine which interpretations are contextually available for <em>bu</em>. Prosody constitutes an independent phonetic layer encoding pragmatic markedness. DN—the marked reading that rejects the presupposition carried by the negative question, operating on NegP—receives robust phonetic highlighting: expanded pitch range, lengthening, and elevated intensity. By contrast, NC operates mainly via grammatical-syntactic negative-concord licensing at the TP level, without extra prosodic prominence, behaving acoustically nearly identically to the baseline SN.</p>
+        <p class="para">From a cross-linguistic perspective, the most robust and potentially universal cue is the manipulation of pitch: as reported for English, Spanish, and Catalan, the marked interpretation DN is associated with a wider F0 excursion and a more prominent pitch movement, suggesting that pitch modulation may constitute a general prosodic strategy for signaling pragmatic markedness across languages. However, the Mandarin data also reveal language-specific characteristics: in addition to F0 variation, duration and intensity significantly contribute to encoding the interpretational contrasts. Thus, while pitch appears to be a cross-linguistically shared cue for distinguishing marked negative responses, duration and intensity may play a more substantial role in Mandarin Chinese, reflecting language-specific strategies in the prosody–pragmatics interface.</p>
+      </div>
+
+      <div class="takeaway">
+        <div class="tk-kicker">Conclusion</div>
+        <p>This research series examines how prosodic patterns, primarily pitch, participate in conversational interpretation from an experimental-phonetic and formal-pragmatic perspective. The study of <em>hao</em> shows that Mandarin prioritizes F0 modulation to distinguish fine-grained stance types while deploying duration selectively to mark negative stance, revealing how pragmaticalized uses undergo phonological reduction. The study of <em>bu</em> shows that distinct pragmatic interpretations (SN, NC, DN) map onto distinct prosodic profiles, with the marked DN reading phonetically highlighted by expanded pitch range, lengthening, and elevated intensity. Together, these findings demonstrate that universal prosodic strategies for pragmatic markedness are filtered through language-specific phonetic-phonological systems, and that the prosody–pragmatics interface can be fruitfully studied by combining experimental phonetics with formal pragmatics.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="detail-r2" role="dialog" aria-modal="true" aria-labelledby="r2modalTitle">
+  <div class="modal-backdrop" data-close-detail></div>
+  <div class="modal-panel">
+    <button class="modal-close" data-close-detail aria-label="Close">×</button>
+    <div class="modal-kicker">Research · 02</div>
+    <h2 id="r2modalTitle">Trill Consonants</h2>
+    <div class="modal-body">
+      <p>Trills are a central object of phonetic research. My work focuses on the production and phonetic variation of trills in languages such as the Tongtai dialects, exploring their articulatory mechanisms and patterns of variation.</p>
+      <p>Trill production in the Tongtai dialects is highly unstable: trills tend to occur after low vowels and show clear intergenerational and gender differences. This variation suggests that trill realization is jointly shaped by phonetic context and social factors.</p>
+      <p>Methodologically, I use Bayesian modeling and generalized additive mixed models (GAMMs) to disentangle the joint effects of multiple factors (phonetic context, age, gender, etc.) on trill realization, with Praat, Python, and R for acoustic analysis and data modeling.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 文章弹窗 -->
+<div class="modal" id="essayModal" role="dialog" aria-modal="true" aria-labelledby="essayModalTitle">
+  <div class="modal-backdrop" data-close-detail></div>
+  <div class="modal-panel">
+    <button class="modal-close" data-close-detail aria-label="Close">×</button>
+    <div class="modal-kicker" id="essayModalDate"></div>
+    <h2 id="essayModalTitle"></h2>
+    <div class="modal-body essay-full" id="essayModalBody"></div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
+  <button class="lightbox-close" aria-label="Close">×</button>
+  <img alt="">
+</div>
+
+<script>
+  // ===== 多语言字典 =====
+  var I18N = {
+    "nav.academic": {zh:"学术", en:"Academic", ja:"アカデミック"},
+    "nav.life": {zh:"生活", en:"Life", ja:"ライフ"},
+    "nav.contact": {zh:"联系", en:"Contact", ja:"連絡"},
+
+    "hero.eyebrow": {zh:"Phonetics 语音学 音声学", en:"Phonetics 语音学 音声学", ja:"Phonetics 语音学 音声学"},
+    "hero.role": {zh:"Ph.D student in Phonetics", en:"Ph.D student in Phonetics", ja:"Ph.D student in Phonetics"},
+    "hero.loc": {zh:"东广岛 · 日本广岛", en:"Hiroshima, Japan", ja:"東広島・広島、日本"},
+    "hero.desc": {zh:"我的研究方向为韵律与语音变异。核心关注韵律作为一种认知资源，是如何被语言使用者调用与解读，并在跨语言、跨方言的比较框架下考察这类韵律策略的分布与功能。在语音变异方面，我主要研究通泰方言的颤音：通泰方言颤音的产出具有高度不稳定性，倾向于在低元音后出现，并表现出代际与性别差异。现阶段我借助贝叶斯建模，解析多重因素对颤音实现的共同影响。", en:"My research focuses on prosody and phonetic variation. I examine how prosody is recruited and interpreted as a cognitive resource by language users, and investigate the distribution and function of prosodic strategies within a cross-linguistic, cross-dialectal comparative framework. On phonetic variation, I study trills in the Tongtai dialects (通泰方言): trill production there is highly unstable, tends to occur after low vowels, and shows intergenerational and gender differences. I currently use Bayesian modeling to disentangle how multiple factors jointly shape trill realization.", ja:"私の研究テーマは韻律と音声変異です。韻律が認知資源として、言語使用者によってどのように利用・解釈されるかに注目し、言語横断的・方言横断的な比較の枠組みで、こうした韻律ストラテジーの分布と機能を考察します。音声変異の面では、主に通泰方言（Tongtai）のふるえ音を研究しています。通泰方言のふるえ音の産出は非常に不安定で、低母音の後に現れやすく、世代間・性別差も見られます。現在はベイズモデリングを用いて、ふるえ音の実現に影響を与える複数の要因の共同的な影響を解析しています。"},
+    "hero.btn.contact": {zh:"联系我", en:"Contact me", ja:"お問い合わせ"},
+    "hero.btn.pub": {zh:"查看发表", en:"Publications", ja:"発表を見る"},
+
+    "chips.about": {zh:"关于", en:"About", ja:"概要"},
+    "chips.research": {zh:"研究", en:"Research", ja:"研究"},
+    "chips.pubs": {zh:"发表", en:"Publications", ja:"発表"},
+    "chips.exp": {zh:"经历", en:"Experience", ja:"経歴"},
+    "chips.contact": {zh:"联系", en:"Contact", ja:"連絡"},
+
+    "about.title": {zh:"关于我", en:"About Me", ja:"私について"},
+    "about.sub": {zh:"广岛大学语音学博士生，研究方向为韵律与语用交互、言语感知与社会变异语音学。", en:"Ph.D. student in Phonetics at Hiroshima University, working on the prosody–pragmatics interface, speech perception, and sociophonetic variation.", ja:"広島大学の音声学博士課程学生。韻律と語用のインターフェース、音声知覚、社会音声学的変異を研究。"},
+    "about.p1": {zh:"本科毕业于江苏师范大学，获英语学士学位；硕士毕业于南京航空航天大学，获语言学硕士学位。现于广岛大学人文社会科学研究科山根典子（Yamane Noriko）实验室攻读语音学博士学位。", en:"I received my B.A. in English from Jiangsu Normal University and my M.A. in Linguistics from Nanjing University of Aeronautics and Astronautics. I am currently a Ph.D. student in Phonetics in the lab of Noriko Yamane at the Graduate School of Humanities and Social Sciences, Hiroshima University.", ja:"江蘇師範大学で英文学士号、南京航空航天大学で言語学修士号を取得しました。現在は広島大学大学院人文社会科学研究科・山根典子研究室で音声学の博士課程に在籍しています。"},
+    "about.p2": {zh:"我的核心研究方向是韵律与语用的交互，同时关注言语感知与社会变异语音学。熟练使用 Praat、Python、R、E-Prime，主要采用 GAMM、贝叶斯统计模型开展数据分析。工作语言为汉语、英语；日语可听说读写，暂无法独立完成学术写作；德语 A2 水平。", en:"My core research concerns the interaction between prosody and pragmatics, alongside speech perception and sociophonetic variation. I am proficient in Praat, Python, R, and E-Prime, and primarily analyze data with GAMM and Bayesian statistical models. My working languages are Chinese and English; I can speak, read, and write Japanese (though not yet independently produce academic writing in it), and I have A2-level German.", ja:"私の中心的な研究テーマは韻律と語用のインターフェースであり、音声知覚と社会音声学的変異にも関心を持っています。Praat・Python・R・E-Primeに精通し、主にGAMMとベイズ統計モデルでデータ分析を行っています。作業言語は中国語と英語です。日本語は聞く・話す・読む・書くことができますが、アカデミック・ライティングを単独で行える段階には至っていません。ドイツ語はA2レベルです。"},
+    "pub.title": {zh:"发表", en:"Publications", ja:"発表"},
+    "pub.sub": {zh:"已收录的论文与会议报告。点「显示更多」可查看全部。", en:"Publications and conference talks. Click \"Show More\" for the full list.", ja:"掲載中の論文と学会発表。「もっと見る」で全リストを表示できます。"},
+    "exp.title": {zh:"学术经历", en:"Academic Experience", ja:"学術経歴"},
+    "exp.sub": {zh:"从本科、硕士到博士三个阶段的教育与研究经历。", en:"Education: B.A., M.A., and Ph.D. — my academic trajectory.", ja:"学歴：学士・修士・博士課程にわたる研究の軌跡。"},
+    "tl1.title": {zh:"广岛大学 · 人文社会科学研究科 · 语言学（博士在读）", en:"Ph.D. in Linguistics, Graduate School of Humanities and Social Sciences, Hiroshima University", ja:"広島大学 人文社会科学研究科 言語学（博士課程）"},
+    "tl1.desc": {zh:"研究方向：韵律与语音变异、颤音；贝叶斯统计建模。", en:"Research: prosody and phonetic variation, trill consonants; Bayesian statistical modeling.", ja:"研究分野：韻律と音声変異、ふるえ音；ベイズ統計モデリング。"},
+    "tl2.title": {zh:"南京航空航天大学 · 外国语学院 · 外国语言学及应用语言学", en:"M.A. in Foreign Linguistics and Applied Linguistics, School of Foreign Languages, Nanjing University of Aeronautics and Astronautics", ja:"南京航空航天大学 外国語学院 外国言語学・応用言語学（修士）"},
+    "tl2.place": {zh:"南京航空航天大学", en:"Nanjing University of Aeronautics and Astronautics, China", ja:"南京航空航天大学（中国）"},
+    "tl2.desc": {zh:"硕士学位", en:"Master's degree", ja:"修士号"},
+    "tl3.title": {zh:"江苏师范大学 · 敬文书院 · 英语教育", en:"B.A. in English Education, Jingwen College, Jiangsu Normal University", ja:"江蘇師範大学 敬文書院 英語教育（学士）"},
+    "tl3.place": {zh:"江苏师范大学", en:"Jiangsu Normal University, China", ja:"江蘇師範大学（中国）"},
+    "tl3.desc": {zh:"优等学士学位", en:"B.A. with honors", ja:"優等学士号"},
+
+    "contact.title": {zh:"联系我", en:"Contact", ja:"連絡先"},
+    "contact.sub": {zh:"学术合作、讨论或任何想聊的话题，欢迎联系。", en:"For collaboration, discussion, or anything you'd like to talk about—feel free to reach out.", ja:"共同研究、ディスカッション、その他何でもお気軽にご連絡ください。"},
+    "contact.loclabel": {zh:"所在地", en:"Location", ja:"所在地"},
+    "contact.loc": {zh:"东广岛 · 日本广岛", en:"Hiroshima, Japan", ja:"東広島・広島、日本"},
+
+    "life.title": {zh:"学术之外的生活", en:"Life Beyond Research", ja:"研究以外の生活"},
+    "life.sub": {zh:"兴趣爱好、游戏 Mod、宠物与照片——这些是我学术之外的色彩。每个板块都在随时更新，旧内容保留在「显示更多」里。", en:"Hobbies, game mods, pets, and photos—these are the colors of my life beyond research. Every section is continually updated, and older content stays under “Show More”.", ja:"趣味、ゲームMOD、ペット、写真——これらは研究以外の私の彩りです。各セクションは随時更新中で、過去の内容は「もっと見る」に残っています。"},
+    "lifechips.hobbies": {zh:"兴趣", en:"Hobbies", ja:"趣味"},
+    "lifechips.mods": {zh:"游戏 Mod", en:"Game Mods", ja:"ゲームMOD"},
+    "lifechips.pets": {zh:"宠物", en:"Pets", ja:"ペット"},
+    "lifechips.gallery": {zh:"相册", en:"Gallery", ja:"フォト"},
+
+    "lifechips.essays": {zh:"个人随笔", en:"Essays", ja:"エッセイ"},
+    "essays.title": {zh:"个人随笔", en:"Personal Essays", ja:"エッセイ"},
+    "essays.empty": {zh:"第一篇文章正在写作中，敬请期待。", en:"The first essay is in progress—stay tuned.", ja:"最初の一篇を執筆中です。お楽しみに。"},
+    "essays.read": {zh:"阅读全文", en:"Read more", ja:"続きを読む"},
+
+    "hobbies.title": {zh:"兴趣爱好", en:"Hobbies", ja:"趣味"},
+    "hobbies.sub": {zh:"学术之外的生活色彩。", en:"The colors of life beyond academia.", ja:"研究以外の生活の彩り。"},
+    "hobby1.title": {zh:"书法", en:"Calligraphy", ja:"書道"},
+    "hobby1.desc": {zh:"写的是《岳阳楼记》。江湖书法，自娱自乐！", en:"This piece is Fan Zhongyan’s “Memorial to Yueyang Tower” (岳阳楼记). Untrained, freestyle calligraphy—purely for my own fun!", ja:"書いたのは范仲淹の『岳陽楼記』。我流の書道で、自分で楽しんでいるだけです！"},
+    "hobby2.title": {zh:"日本动漫", en:"Anime", ja:"アニメ"},
+    "hobby2.desc": {zh:"我很喜欢日本动漫，但已经许多年没有看过了。目前只看《无职转生》，这是我最喜欢的作品。", en:"I love Japanese anime, though I haven’t watched any for many years. These days I only follow Mushoku Tensei: Jobless Reincarnation—my favorite work of all.", ja:"日本のアニメが大好きですが、もう何年も見ていませんでした。今見ているのは『無職転生』だけで、いちばん好きな作品です。"},
+    "hobby3.title": {zh:"音乐", en:"Music", ja:"音楽"},
+    "hobby3.desc": {zh:"最喜欢长渕刚（Nagabuchi Tsuyoshi）。他的歌非常有力量，让人回味苦涩的同时充满斗志。", en:"My favorite artist is Tsuyoshi Nagabuchi. His songs are incredibly powerful—they leave a bittersweet aftertaste while filling you with fighting spirit.", ja:"いちばん好きなのは長渕剛。彼の歌はとても力強く、ほろ苦さを噛みしめながらも闘志が湧いてきます。"},
+
+    "mods.title": {zh:"游戏 Mod", en:"Game Mods", ja:"ゲームMOD"},
+    "mods.sub": {zh:"我自己制作的游戏内容：用语言学的视角做游戏模组，也写各种游戏脚本。", en:"Game content I've made myself: mods that bring a linguistic perspective to games, plus various game scripts.", ja:"自分で制作したゲームコンテンツ：言語学の視点から作るゲームMODや、さまざまなゲームスクリプト。"},
+    "mods.note": {zh:"两个 Mod 均为原创自制。点击「下载 Mod」获取安装包，持续更新，新版本会在此处迭代。", en:"Both mods are original self-made creations. Click \"Download\" for the installer; they are updated continuously and new versions appear here.", ja:"2つのMODはいずれも自作のオリジナル作品です。「ダウンロード」からインストールファイルを入手できます。継続的に更新し、新バージョンはここに反映されます。"},
+    "mods.dl": {zh:"下载 Mod", en:"Download", ja:"ダウンロード"},
+    "mod1.game": {zh:"The Sims · 模拟人生", en:"The Sims", ja:"ザ・シムズ"},
+    "mod1.title": {zh:"语言学技能 Mod", en:"Linguistics Skill Mod", ja:"言語学スキルMOD"},
+    "mod1.desc": {zh:"新增语言学技能（0–3 级）与两本可阅读书籍：《An Introduction to Language》可将技能升至 2 级，2 级升 3 级需阅读《A Course in Linguistics》。语言学技能对魅力、辩论、写作有巨额加成。当前到 3 级，后续将扩展至 10 级、加入更多语言学书籍，并纳入大学 DLC 与职业路径。持续更新中。", en:"Adds a Linguistics skill (levels 0–3) plus two readable books: An Introduction to Language raises the skill to level 2, and A Course in Linguistics takes it from level 2 to 3. The skill grants large bonuses to Charisma, Debate, and Writing. Currently capped at level 3; future plans extend it to level 10, add more linguistics books, integrate it into the University DLC and a career path. In active development.", ja:"言語学スキル（0–3レベル）と読める書籍2冊を追加：『An Introduction to Language』でレベル2まで上がり、レベル2→3には『A Course in Linguistics』を読む必要があります。言語学スキルはカリスマ・ディベート・ライティングに大きなボーナス。現在はレベル3まで。今後はレベル10への拡張、書籍追加、大学DLC・キャリアへの組み込みを予定。更新中。"},
+    "mod1.books": {zh:"预计更新的书籍", en:"Planned Books", ja:"追加予定の書籍"},
+    "mod1.devnote": {zh:"开发《模拟人生》Mod 涉及模块较多、测试流程较长，整体比较复杂、耗时较久；新内容会分批更新，敬请期待。", en:"Developing a The Sims mod is fairly complex and takes a long time—it involves many modules and a lengthy testing process. New content will roll out in batches, so stay tuned.", ja:"『ザ・シムズ』のMOD開発はモジュールが多くテスト工程も長く、複雑で時間がかかります。新コンテンツは順次追加予定です。お楽しみに。"},
+    "mod2.title": {zh:"ER 疾病扩展 Mod", en:"ER Disease Expansion Mod", ja:"ER疾患拡張MOD"},
+    "mod2.desc": {zh:"降低原版 ER 疾病的出现频率，新增 66 种疾病，其中含 10 种语言学梗疾病：花园路径综合征、中心嵌套溢出、岛屿约束违例、语迹丢失综合征、麦格克眩晕、首音互换综合征、元音大推移综合征、舌尖颤音过劳、语义饱和症、三声变调失序。", en:"Reduces the spawn rate of the base-game ER diseases and adds 66 new diseases, including 10 linguistics-themed ones: Garden-Path Syndrome, Center-Embedding Overflow, Island Constraint Violation, Trace Deletion Syndrome, McGurk Vertigo, Spoonerism Syndrome, Great Vowel Shift Syndrome, Apical Trill Fatigue, Semantic Satiation, and Tone 3 Sandhi Disorder.", ja:"元版ER疾患の出現頻度を下げ、新規66疾患を追加。うち10種は言語学ネタ疾患：ガーデンパス症候群、多重中心埋め込みオーバーフロー、島制約違反、語跡消失症候群、マガークめまい、スプーナー言い間違い症候群、大母音推移症候群、舌尖ふるえ音疲労、意味飽和症、三声連読変調障害。"},
+
+    "book.0": {zh:"语音学", en:"Phonetics", ja:"音声学"},
+    "book.1": {zh:"音系学", en:"Phonology", ja:"音韻論"},
+    "book.2": {zh:"形态学", en:"Morphology", ja:"形態論"},
+    "book.3": {zh:"句法学", en:"Syntax", ja:"統語論"},
+    "book.4": {zh:"语义学", en:"Semantics", ja:"意味論"},
+    "book.5": {zh:"语用学", en:"Pragmatics", ja:"語用論"},
+    "book.6": {zh:"社会语言学", en:"Sociolinguistics", ja:"社会言語学"},
+    "book.7": {zh:"历史语言学", en:"Historical Linguistics", ja:"歴史言語学"},
+    "dl.theory": {zh:"理论梗", en:"Reference", ja:"言語学ネタ"},
+    "dl.sym": {zh:"症状", en:"Symptoms", ja:"症状"},
+    "dl.dx": {zh:"确诊", en:"Diagnosis", ja:"診断"},
+    "dl.tx": {zh:"治疗", en:"Treatment", ja:"治療"},
+    "dx.head": {zh:"10 种语言学疾病", en:"10 Linguistics-Themed Diseases", ja:"言語学ネタ疾患10種"},
+    "dx.sub": {zh:"由语言学理论与音韵现象衍生出的趣味病症——症状、确诊与专属治疗。", en:"Playful ailments derived from linguistic theory and phonological phenomena—each with symptoms, diagnosis, and a dedicated treatment.", ja:"言語学理論や音韻現象に由来するユーモラスな疾患——症状・診断・専用治療つき。"},
+    "d1.name": {zh:"花园路径综合征", en:"Garden-Path Syndrome", ja:"ガーデンパス症候群"},
+    "d1.theory": {zh:"花园路径句、最小附着原则", en:"Garden-path sentences; the Minimal Attachment principle", ja:"ガーデンパス文、最小付加の原則"},
+    "d1.sym": {zh:"意识混乱 60% · 头痛 50% · 过劳 40% · 恶心 35%", en:"confusion 60% · headache 50% · fatigue 40% · nausea 35%", ja:"意識混濁 60% · 頭痛 50% · 過労 40% · 吐き気 35%"},
+    "d1.dx": {zh:"评估 → 晚闭合歧义下回溯重分析失败（最小附着被强制锁定）", en:"Assessment → failure to backtrack and reanalyze under late-closure ambiguity (Minimal Attachment is locked in)", ja:"評価 → 遅い閉鎖の曖昧性で後戻りと再分析に失敗（最小付加が固定される）"},
+    "d1.tx": {zh:"逗号注射（在歧义点补标点）、韵律断句疗法", en:"Comma injection (insert punctuation at the ambiguity point), prosodic phrasing therapy", ja:"読点注射（曖昧な箇所に句読点を補う）、韻律区切り療法"},
+    "d2.name": {zh:"中心嵌套溢出", en:"Center-Embedding Overflow", ja:"多重中心埋め込みオーバーフロー"},
+    "d2.theory": {zh:"递归、依存局域成本", en:"Recursion; dependency locality cost", ja:"再帰、依存局所性コスト"},
+    "d2.sym": {zh:"头晕 65% · 意识混乱 55% · 出汗 40% · 晕厥 15%", en:"dizziness 65% · confusion 55% · sweating 40% · fainting 15%", ja:"めまい 65% · 意識混濁 55% · 発汗 40% · 失神 15%"},
+    "d2.dx": {zh:"神经系统检查 → 三重中心嵌套下语法栈溢出（依存局域成本超限）", en:"Neurological exam → grammar stack overflow under triple center-embedding (dependency locality cost exceeded)", ja:"神経学的検査 → 三重中心埋め込みで文法スタックがオーバーフロー（依存局所性コスト超過）"},
+    "d2.tx": {zh:"句法扁平化（拆成短句）、工作记忆栈清空", en:"Syntactic flattening (split into short sentences), working-memory stack reset", ja:"統語の平坦化（短文に分割）、ワーキングメモリのスタック・クリア"},
+    "d3.name": {zh:"岛屿约束违例", en:"Island Constraint Violation", ja:"島制約違反"},
+    "d3.theory": {zh:"Ross 的岛屿约束", en:"Ross's island constraints", ja:"ロスの島制約"},
+    "d3.sym": {zh:"头痛 55% · 恶心 45% · 意识混乱 40% · 易怒 40%", en:"headache 55% · nausea 45% · confusion 40% · irritability 40%", ja:"頭痛 55% · 吐き気 45% · 意識混濁 40% · 易怒性 40%"},
+    "d3.dx": {zh:"评估 + 言语倾听 → wh 语迹跨越复杂名词短语岛（子邻接条件阻断）", en:"Assessment + speech listening → wh-trace crosses a complex NP island (blocked by the Subjacency Condition)", ja:"評価＋発話聴取 → wh痕跡が複合名詞句の島を越える（下接の条件に阻まれる）"},
+    "d3.tx": {zh:"复指代词挽救疗法（用代词「救出」被困成分）", en:"Resumptive pronoun rescue therapy (a pronoun “rescues” the stranded constituent)", ja:"再述代名詞による救済療法（代名詞で孤立した要素を「救出」する）"},
+    "d4.name": {zh:"语迹丢失综合征", en:"Trace Deletion Syndrome", ja:"語跡消失症候群"},
+    "d4.theory": {zh:"Grodzinsky 的语迹删除假说", en:"Grodzinsky's Trace Deletion Hypothesis", ja:"グロジンスキーの痕跡削除仮説"},
+    "d4.sym": {zh:"意识混乱 55% · 头晕 50% · 言语不清 40% · 焦虑 35%", en:"confusion 55% · dizziness 50% · slurred speech 40% · anxiety 35%", ja:"意識混濁 55% · めまい 50% · 不明瞭な発話 40% · 不安 35%"},
+    "d4.dx": {zh:"神经系统检查 + 言语倾听 → 被动句 NP 移位语迹缺失，题元角色指派反转（施受混淆）", en:"Neurological exam + speech listening → NP-movement trace missing in passives; thematic role assignment reversed (agent/patient confusion)", ja:"神経学的検査＋発話聴取 → 受動文でNP移動の痕跡が欠落し、主題役割の付与が逆転（動作主と被動者の混同）"},
+    "d4.tx": {zh:"映射疗法（把成分重新映射回题元角色）", en:"Mapping therapy (re-map constituents to thematic roles)", ja:"マッピング療法（要素を主題役割に再対応づける）"},
+    "d5.name": {zh:"麦格克眩晕", en:"McGurk Vertigo", ja:"マガークめまい"},
+    "d5.theory": {zh:"视听整合的麦格克效应", en:"The McGurk effect in audiovisual integration", ja:"視聴覚統合のマガーク効果"},
+    "d5.sym": {zh:"头晕 80% · 恶心 60% · 视力模糊 45% · 平衡感差 40% · 耳鸣 35%", en:"dizziness 80% · nausea 60% · blurred vision 45% · poor balance 40% · tinnitus 35%", ja:"めまい 80% · 吐き気 60% · 視力のかすみ 45% · 平衡感覚の低下 40% · 耳鳴り 35%"},
+    "d5.dx": {zh:"神经系统检查 + 耳部检查 → 视听整合冲突：听 /ba/ 加看 /ga/ 感知为 /da/", en:"Neurological exam + ear exam → audiovisual conflict: hearing /ba/ while seeing /ga/ is perceived as /da/", ja:"神経学的検査＋耳の検査 → 視聴覚の不一致：/ba/を聞きながら/ga/を見ると/da/と知覚される"},
+    "d5.tx": {zh:"闭眼聆听疗法、抗组胺药", en:"Eyes-closed listening therapy, antihistamines", ja:"閉眼聴取療法、抗ヒスタミン薬"},
+    "d6.name": {zh:"首音互换综合征", en:"Spoonerism Syndrome", ja:"スプーナー言い間違い症候群"},
+    "d6.theory": {zh:"斯普纳口误、Fromkin 口误库", en:"Spoonerisms; Fromkin's speech-error corpus", ja:"スプーナリズム、フロムキンの言い間違いコーパス"},
+    "d6.sym": {zh:"言语不清 65% · 焦虑 55% · 出汗 40% · 易怒 30%", en:"slurred speech 65% · anxiety 55% · sweating 40% · irritability 30%", ja:"不明瞭な発話 65% · 不安 55% · 発汗 40% · 易怒性 30%"},
+    "d6.dx": {zh:"言语倾听 → 音节首辅音同位置换位（如 a half-formed wish 说成 a half-warmed fish）", en:"Speech listening → onset consonants swap between syllable-initial positions (e.g., “a half-formed wish” → “a half-warmed fish”)", ja:"発話聴取 → 音節頭子音が同じ位置で入れ替わる（例：a half-formed wish → a half-warmed fish）"},
+    "d6.tx": {zh:"逆序复述疗法、抗焦虑药", en:"Reverse-order repetition therapy, anxiolytics", ja:"逆順復唱療法、抗不安薬"},
+    "d7.name": {zh:"元音大推移综合征", en:"Great Vowel Shift Syndrome", ja:"大母音推移症候群"},
+    "d7.theory": {zh:"元音大推移", en:"The Great Vowel Shift", ja:"大母音推移"},
+    "d7.sym": {zh:"头晕 70% · 言语不清 60% · 平衡感差 45% · 乏力 40% · 意识混乱 30%", en:"dizziness 70% · slurred speech 60% · poor balance 45% · weakness 40% · confusion 30%", ja:"めまい 70% · 不明瞭な発話 60% · 平衡感覚の低下 45% · 脱力感 40% · 意識混濁 30%"},
+    "d7.dx": {zh:"神经系统检查 + 言语倾听 → 长元音链式上移，F1/F2 元音空间面积塌缩", en:"Neurological exam + speech listening → long vowels shift upward in a chain; F1/F2 vowel-space area collapses", ja:"神経学的検査＋発話聴取 → 長母音が連鎖的に上昇し、F1/F2の母音空間面積が縮小"},
+    "d7.tx": {zh:"元音三角校准（i/a/u 定点复述）、休息", en:"Vowel-triangle calibration (fixed-point repetition of i/a/u), rest", ja:"母音三角の較正（i/a/uの定点復唱）、休養"},
+    "d8.name": {zh:"舌尖颤音过劳", en:"Apical Trill Fatigue", ja:"舌尖ふるえ音疲労"},
+    "d8.theory": {zh:"颤音（我的研究方向）", en:"Trill consonants (my own research area)", ja:"ふるえ音（私の研究テーマ）"},
+    "d8.sym": {zh:"过劳 65% · 咽喉痛 50% · 震颤 40% · 声音嘶哑 40% · 肌肉疼痛 35%", en:"fatigue 65% · sore throat 50% · tremor 40% · hoarseness 40% · muscle pain 35%", ja:"過労 65% · 咽頭痛 50% · 震え 40% · 嗄声 40% · 筋肉痛 35%"},
+    "d8.dx": {zh:"喉镜 + 言语倾听 → 舌尖颤动周期偏离 25–35 ms 常模，气动-弹性振动失稳", en:"Laryngoscopy + speech listening → apical trill cycle deviates from the 25–35 ms norm; aeroelastic vibration destabilizes", ja:"喉頭鏡＋発話聴取 → 舌尖ふるえ音の周期が25–35 msの基準から逸脱し、空気力学的・弾性的振動が不安定化"},
+    "d8.tx": {zh:"伯努利气流调节、休息", en:"Bernoulli airflow regulation, rest", ja:"ベルヌーイ気流調整、休養"},
+    "d9.name": {zh:"语义饱和症", en:"Semantic Satiation", ja:"意味飽和症"},
+    "d9.theory": {zh:"重复一个词后词义消失", en:"Meaning loss after repeating a word", ja:"単語を繰り返すと意味が消える現象"},
+    "d9.sym": {zh:"意识混乱 50% · 焦虑 55% · 头晕 45% · 恶心 30%", en:"confusion 50% · anxiety 55% · dizziness 45% · nausea 30%", ja:"意識混濁 50% · 不安 55% · めまい 45% · 吐き気 30%"},
+    "d9.dx": {zh:"评估 + 言语倾听 → 重复复述后词义激活衰减", en:"Assessment + speech listening → semantic activation decays after repeated recitation", ja:"評価＋発話聴取 → 繰り返し復唱後に意味の活性化が減衰"},
+    "d9.tx": {zh:"同义词替换疗法、镇静药", en:"Synonym substitution therapy, sedatives", ja:"類義語置換療法、鎮静薬"},
+    "d10.name": {zh:"三声变调失序", en:"Tone 3 Sandhi Disorder", ja:"三声連読変調障害"},
+    "d10.theory": {zh:"连读变调（上声 + 上声）", en:"Tone sandhi (T3 + T3)", ja:"連読変調（第三声＋第三声）"},
+    "d10.sym": {zh:"言语不清 50% · 声音嘶哑 40% · 焦虑 40% · 咽喉痛 35% · 头痛 30%", en:"slurred speech 50% · hoarseness 40% · anxiety 40% · sore throat 35% · headache 30%", ja:"不明瞭な発話 50% · 嗄声 40% · 不安 40% · 咽頭痛 35% · 頭痛 30%"},
+    "d10.dx": {zh:"言语倾听 + 喉镜 → 连续上声变调失败（T3 T3 应变 T2 T3），基频轮廓错位", en:"Speech listening + laryngoscopy → consecutive-T3 sandhi fails (T3 T3 should become T2 T3); F0 contour misaligned", ja:"発話聴取＋喉頭鏡 → 連続する第三声の変調に失敗（T3 T3はT2 T3になるべき）、基本周波数輪郭がずれる"},
+    "d10.tx": {zh:"音高爬坡训练", en:"Pitch-ramp training", ja:"ピッチ上昇トレーニング"},
+
+    "pets.title": {zh:"我的宠物", en:"My Pets", ja:"わたしのペット"},
+    "pets.sub": {zh:"我的两只猫。", en:"My two cats.", ja:"わたしの二匹の猫。"},
+    "pet1.desc": {zh:"小母猫，2024 年 8 月 6 日出生，妈妈是布偶，爸爸是美短。2026 年 3 月 Juliet 到家后，她离家出走，再也没有回来。", en:"A girl, born on August 6, 2024, to a Ragdoll mother and an American Shorthair father. In March 2026, after Juliet came home, she ran away and never came back.", ja:"2024年8月6日生まれの女の子。母はラグドール、父はアメリカンショートヘア。2026年3月、Julietが家に来た後に家出し、それきり戻ってきませんでした。"},
+    "pet2.desc": {zh:"公猫，中华田园猫，2026 年 1 月 12 日出生。汉语里的「橘」和 Ju 谐音，因此取名 Juliet。", en:"A boy, a Chinese domestic cat, born on January 12, 2026. In Mandarin, 橘 jú (“orange”) sounds like “Ju”—hence the name Juliet.", ja:"2026年1月12日生まれの男の子。中華田園猫（中国の在来猫）。中国語の「橘（jú）」が「Ju」と音が似ていることから、Julietと名付けました。"},
+
+    "gallery.title": {zh:"照片墙", en:"Photo Gallery", ja:"フォトギャラリー"},
+    "gallery.sub": {zh:"生活与研究的影像记录。", en:"Snapshots of life and research.", ja:"生活と研究のスナップ写真。"},
+
+    "showmore.more": {zh:"显示更多", en:"Show More", ja:"もっと見る"},
+    "showmore.less": {zh:"收起", en:"Collapse", ja:"閉じる"},
+    "footer.rights": {zh:"版权所有", en:"All rights reserved.", ja:"All rights reserved."}
+  };
+
+  // ===== 语言管理与应用 =====
+  var savedLang = null;
+  try { savedLang = localStorage.getItem('lang'); } catch(e){}
+  var detected = (navigator.language || 'en').toLowerCase().slice(0,2);
+  var LANG = savedLang || (['zh','en','ja'].indexOf(detected) >= 0 ? detected : 'en');
+
+  function setMoreLabel(btn){
+    var key = btn.getAttribute('aria-expanded') === 'true' ? 'showmore.less' : 'showmore.more';
+    btn.querySelector('.sm-text').textContent = I18N[key][LANG];
+  }
+
+  function applyLang(lang){
+    LANG = lang;
+    try { localStorage.setItem('lang', lang); } catch(e){}
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang === 'ja' ? 'ja' : 'en';
+    // 更新所有带 data-i18n 的文字
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if (I18N[key] && I18N[key][lang]) el.textContent = I18N[key][lang];
+    });
+    document.querySelectorAll('.showmore').forEach(setMoreLabel);
+    // 语言按钮高亮
+    document.querySelectorAll('.lang-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+    });
+  }
+
+  document.querySelectorAll('.lang-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      applyLang(btn.getAttribute('data-lang'));
+    });
+  });
+
+  // ===== 研究方向详情弹窗 =====
+  function closeDetail(){
+    document.querySelectorAll('.modal.open').forEach(function(m){ m.classList.remove('open'); });
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('.research-link').forEach(function(item){
+    item.addEventListener('click', function(){
+      var m = document.getElementById('detail-' + item.getAttribute('data-detail'));
+      if (m){ m.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    });
+    item.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); item.click(); }
+    });
+  });
+  document.querySelectorAll('[data-close-detail]').forEach(function(el){
+    el.addEventListener('click', closeDetail);
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key !== 'Escape') return;
+    if (lightbox.classList.contains('open')) closeLightbox(); else closeDetail();
+  });
+
+  // ===== 图片点击放大 =====
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = lightbox.querySelector('img');
+  var lockedBefore = '';
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    lightboxImg.removeAttribute('src');
+    document.body.style.overflow = lockedBefore;
+  }
+  document.querySelectorAll('.hobby-photo, .pet-photo, .gallery-photo, .ri-fig img, .modshots img, .mfig img, .about-photo, .hero-photo').forEach(function(img){
+    img.classList.add('zoomable');
+    img.addEventListener('click', function(e){
+      e.stopPropagation();
+      lightboxImg.src = img.currentSrc || img.src;
+      lightboxImg.alt = img.alt;
+      lockedBefore = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      lightbox.classList.add('open');
+    });
+  });
+  lightbox.addEventListener('click', closeLightbox);
+
+  // ===== 个人陈述：文章列表与弹窗 =====
+  (function(){
+    var list = document.getElementById('essayMore');
+    var essays = list.querySelectorAll('.essay');
+    document.querySelector('.essay-empty').hidden = essays.length > 0;
+    if (!list.querySelector('.more-item')) document.querySelector('[data-target="essayMore"]').hidden = true;
+    var modal = document.getElementById('essayModal');
+    essays.forEach(function(el){
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('role', 'button');
+      var more = document.createElement('span');
+      more.className = 'essay-more';
+      more.setAttribute('data-i18n', 'essays.read');
+      more.textContent = I18N['essays.read'][LANG];
+      el.appendChild(more);
+      function open(){
+        document.getElementById('essayModalDate').textContent = el.querySelector('.essay-date').textContent;
+        document.getElementById('essayModalTitle').textContent = el.querySelector('.essay-title').textContent;
+        document.getElementById('essayModalBody').innerHTML = el.querySelector('.essay-body').innerHTML;
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        modal.querySelector('.modal-panel').scrollTop = 0;
+      }
+      el.addEventListener('click', open);
+      el.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); } });
+    });
+  })();
+
+  // ===== 视图路由（hash: #academic / #life） =====
+  function showPage(page){
+    var views = document.querySelectorAll('.view');
+    for (var i = 0; i < views.length; i++){
+      views[i].classList.toggle('active', views[i].getAttribute('data-view') === page);
+    }
+    var links = document.querySelectorAll('.nav-links a[data-page]');
+    for (var j = 0; j < links.length; j++){
+      links[j].classList.toggle('active', links[j].getAttribute('data-page') === page);
+    }
+    window.scrollTo(0, 0);
+  }
+  function route(){
+    var h = location.hash.replace('#', '');
+    showPage(h === 'life' ? 'life' : 'academic');
+  }
+  window.addEventListener('hashchange', route);
+
+  // 品牌 → 学术页
+  document.getElementById('brandLink').addEventListener('click', function(e){
+    e.preventDefault();
+    if (location.hash !== '#academic') location.hash = 'academic';
+    else showPage('academic');
+  });
+  // 导航：切换页面
+  document.querySelectorAll('.nav-links a[data-page]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      var page = a.getAttribute('data-page');
+      if (location.hash !== '#' + page) location.hash = page;
+      else showPage(page);
+    });
+  });
+  // 导航：联系 → 切到学术页并滚动
+  document.getElementById('contactLink').addEventListener('click', function(e){
+    e.preventDefault();
+    if (!document.getElementById('view-academic').classList.contains('active')){
+      showPage('academic');
+      if (location.hash !== '#academic') location.hash = 'academic';
+    }
+    setTimeout(function(){
+      document.getElementById('contact').scrollIntoView({behavior:'smooth', block:'start'});
+    }, 60);
+  });
+
+  // 页内滚动
+  document.querySelectorAll('[data-scroll]').forEach(function(el){
+    el.addEventListener('click', function(e){
+      if (e.currentTarget.tagName === 'A') e.preventDefault();
+      var target = document.getElementById(el.getAttribute('data-scroll'));
+      if (target) target.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  // 显示更多 / 收起
+  document.querySelectorAll('.showmore').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var wrap = document.getElementById(btn.getAttribute('data-target'));
+      var expanded = wrap.classList.toggle('expanded');
+      btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      setMoreLabel(btn);
+    });
+  });
+
+  // 移动端导航开关
+  var toggle = document.getElementById('navToggle');
+  var navLinks = document.getElementById('navLinks');
+  toggle.addEventListener('click', function(){
+    var open = navLinks.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  navLinks.addEventListener('click', function(e){
+    if (e.target.tagName === 'A'){
+      navLinks.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // 页脚年份 + 初始化语言
+  document.getElementById('year').textContent = new Date().getFullYear();
+  if (location.hash === '#life') showPage('life'); else showPage('academic');
+  applyLang(LANG);
+</script>
+</body>
+</html>
